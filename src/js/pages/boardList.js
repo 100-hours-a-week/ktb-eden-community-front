@@ -1,5 +1,6 @@
 import { getRequest } from "../api/api.js";
 import { formatDate } from "../utils/dateUtil.js";
+import { requireLogin } from "../utils/auth.js";
 
 const API_URL = "/boards"
 
@@ -7,7 +8,8 @@ const boardListContainer = document.querySelector(".board-list");
 
 const createBtn = document.querySelector(".create-btn");
     createBtn.addEventListener("click", () => {
-    location.href = "./boardCreate.html";
+      if(!requireLogin()) return;
+      location.href = "./boardCreate.html";
 });
 
 let cursorId = null;
@@ -94,11 +96,14 @@ async function loadMoreBoards() {
 
 /**
  * 무한스크롤 옵저버
- *  */
+ */
 const observerTarget = document.createElement("div");
 observerTarget.classList.add("scroll-observer");
 boardListContainer.after(observerTarget);
 
+/**
+ * 무한스크롤
+ */
 const observer = new IntersectionObserver(async ([entry]) => {
   if (entry.isIntersecting && hasNext && !isLoading) {
     await loadMoreBoards();

@@ -1,4 +1,5 @@
 import { getRequest, postRequest } from "../api/api.js";
+import { requireLogin } from "../utils/auth.js";
 
 loadHeader();
 
@@ -24,6 +25,7 @@ async function loadHeader() {
  * 프로필
  */
 async function loadUserProfile() {
+  if (!requireLogin()) return;
   try {
     const res = await getRequest("/users", true);
     const user = res.data;
@@ -55,6 +57,7 @@ function initHeaderEvents() {
   const logoutBtn = document.getElementById("logout-btn");
   if (logoutBtn) {
     logoutBtn.addEventListener("click", async () => {
+      if (!requireLogin()) return;
       await postRequest("/auth/logout", null, false);
       localStorage.removeItem("accessToken");
       alert("로그아웃 되었습니다.");
