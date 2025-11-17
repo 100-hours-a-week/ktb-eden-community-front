@@ -16,6 +16,20 @@ const profilePreview = document.getElementById("profile-preview");
 
 let selectedImageFile = null;
 
+/**
+ * 입력 필드의 에러 메시지 표시
+ */
+function showError(input, message) {
+  const helper = input.parentElement.querySelector(".helper-text");
+  if (helper) helper.textContent = message;
+}
+
+/**
+ * 모든 에러 메시지 초기화
+ */
+function clearErrors() {
+  document.querySelectorAll(".helper-text").forEach((h) => (h.textContent = ""));
+}
 
 /**
  * 로그인 화면 이동
@@ -53,7 +67,7 @@ signupBtn.addEventListener("click", async () => {
 
   if (!email) return showError(emailInput, "이메일을 입력해주세요.");
   if (!password) return showError(pwInput, "비밀번호를 입력해주세요.");
-  if (!confirm) return showError(pwConfirmInput, "비밀번호 확인을 입력해주세요.");
+  if (!confirm) return showError(pwConfirmInput, "비밀번호를 한번더 입력해주세요.");
   if (!nickname) return showError(nicknameInput, "닉네임을 입력해주세요.");
 
   if (password !== confirm) {
@@ -90,19 +104,25 @@ signupBtn.addEventListener("click", async () => {
 
     switch (msg) {
       case "email_duplicate":
-        return showError(emailInput, "이미 사용 중인 이메일입니다.");
+        return showError(emailInput, "중복된 이메일입니다.");
 
       case "email_invalid":
-        return showError(emailInput, "이메일 형식이 올바르지 않습니다.");
+        return showError(emailInput, "올바른 이메일 주소 형식을 입력해주세요.(예:example@example.com)");
 
       case "nickname_duplicate":
         return showError(nicknameInput, "이미 사용 중인 닉네임입니다.");
+      
+      case "nickname_max_10":
+        return showError(nicknameInput, "닉네임은 최대 10자 까지 작성 가능합니다. ")
+
+      case "nickname_no_space":
+        return showError(nicknameInput, "띄어쓰기를 없애주세요")
 
       case "password_invalid":
         return showError(pwInput, "비밀번호 형식이 올바르지 않습니다.");
 
       case "password_mismatch":
-        return showError(pwConfirmInput, "비밀번호가 일치하지 않습니다.");
+        return showError(pwConfirmInput, "비밀번호가 다릅니다.");
 
       case "password_rule_violation":
         return showError(pwInput, "비밀번호 규칙을 만족하지 않습니다. (영문대문자+영문소문자+숫자+특수문자 포함)");
@@ -112,18 +132,3 @@ signupBtn.addEventListener("click", async () => {
     }
   }
 });
-
-/**
- * 입력 필드의 에러 메시지 표시
- */
-function showError(input, message) {
-  const helper = input.parentElement.querySelector(".helper-text");
-  if (helper) helper.textContent = message;
-}
-
-/**
- * 모든 에러 메시지 초기화
- */
-function clearErrors() {
-  document.querySelectorAll(".helper-text").forEach((h) => (h.textContent = ""));
-}

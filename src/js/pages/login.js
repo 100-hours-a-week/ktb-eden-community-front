@@ -23,7 +23,9 @@ function clearErrors() {
   document.querySelectorAll(".helper-text").forEach((h) => (h.textContent = ""));
 }
 
-// 로그인 버튼 클릭 이벤트
+/**
+ * 로그인 요청
+ */
 loginBtn.addEventListener("click", async () => {
   clearErrors();
 
@@ -47,6 +49,9 @@ loginBtn.addEventListener("click", async () => {
   }
 });
 
+/**
+ * 회원가입 페이지 이동
+ */
 signupBtn.addEventListener("click", () => {
   location.href = "./signup.html";
 });
