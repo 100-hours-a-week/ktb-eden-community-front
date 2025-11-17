@@ -1,0 +1,225 @@
+html {
+  font-size: 62.5%;
+}
+
+body {
+  margin: 0;
+  font-family: "Pretendard", sans-serif;
+  background-color: #f3f3f4;
+  color: #333;
+  font-size: 1.6rem;
+}
+
+header {
+  background-color: #F4F5F7;
+  text-align: center;
+  padding: 0.5rem;
+  font-size: 3.2rem;
+  position: relative;
+}
+
+.header-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 1.6rem;
+  height: 4rem;
+
+  max-width: 100rem;
+  margin: 0 auto;
+  position: relative;
+}
+
+/* 제목을 중앙 고정 */
+.header-content h1 {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 3.2rem;
+  font-weight: 400;
+  margin: 0;
+}
+
+/* 왼쪽/오른쪽 영역 */
+.header-left,
+.header-right {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;       /* 버튼 영역 최소 너비 */
+}
+
+/* 작은 화면에서도 버튼이 절대 안 사라지도록 */
+@media (max-width: 480px) {
+  .header-left,
+  .header-right {
+    width: 3.6rem;   /* 모바일에서는 더 좁게 */
+  }
+
+  .header-content h1 {
+    font-size: 2.4rem;
+  }
+}
+
+header::after {
+  content: "";
+  display: block;
+  width: 100%;
+  height: 0.1rem;
+  background-color: #ccc;
+}
+
+button {
+  padding: 0.625rem; /* 10px */
+  border: none;
+  border-radius: 0.375rem; /* 6px */
+  cursor: pointer;
+  font-weight: bold;
+}
+
+
+
+/* ===== Helper text ===== */
+.helper-text {
+  color: red;
+  font-size: 1.2rem;
+  height: 1.5rem;
+  text-align: left;
+}
+
+/* ===== 뒤로가기 버튼 ===== */
+.back-btn {
+  background: none;
+  border: none;
+  font-size: 2.5rem;
+  cursor: pointer;
+  color: #333;
+}
+
+
+/* ===== 모달 배경 ===== */
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: none; /* 기본 숨김 */
+  justify-content: center;
+  align-items: center;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 999;
+}
+
+/* ===== 모달 박스 ===== */
+.modal-popup {
+  width: 90%;
+  max-width: 360px;
+  background: #ffffff;
+  padding: 2.4rem;
+  border-radius: 18px; /* 디자인 참고 */
+  text-align: center;
+}
+
+/* 제목 */
+.modal-popup h3 {
+  margin: 0;
+  font-size: 1.9rem;
+  font-weight: 700;
+  color: #222;
+}
+
+/* 설명 */
+.modal-popup p {
+  margin-top: 1.2rem;
+  font-size: 1.4rem;
+  color: #555;
+}
+
+/* ===== 버튼 그룹 ===== */
+.modal-btn-group {
+  margin-top: 2rem;
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+}
+
+/* 버튼 공통 */
+.modal-btn {
+  flex: 1;
+  padding: 0.9rem 0;
+  border: none;
+  border-radius: 10px;
+  font-size: 1.4rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+/* 취소 버튼 */
+.modal-btn.cancel {
+  background: #222;
+  color: #fff;
+}
+
+/* 확인 버튼 */
+.modal-btn.confirm {
+  background: #C9B7FF; /* 디자인 보라색 */
+  color: #fff;
+}
+
+/* 프로필 드롭다운 */
+.profile-wrapper {
+  position: relative;
+  display: inline-block;
+}
+
+.profile-icon {
+  position: static;
+  width: 3rem;
+  height: 3rem;
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+/* 드롭다운 메뉴 */
+.profile-menu {
+  display: none;
+  position: absolute;
+  right: 0;
+  top: 3.5rem;
+
+  background: white;
+  width: 14rem;
+  border: 1px solid #ddd;
+  border-radius: 0.6rem;
+  box-shadow: 0 0.4rem 0.9rem rgba(0, 0, 0, 0.1);
+
+  list-style: none;
+  padding: 0.5rem 0;
+  margin: 0;
+
+  z-index: 9999;
+}
+
+.profile-menu li {
+  padding: 1rem;
+  font-size: 1.4rem;
+  cursor: pointer;
+  color: #333;
+}
+
+.profile-menu li:hover {
+  background-color: #f5f5f5;
+}
+
+/* hover 시 드롭다운 보이기 */
+.profile-wrapper:hover .profile-menu {
+  display: block;
+}
+
+
+h1, h2, h3, h4, h5, h6 {
+  font-size: inherit;
+  font-weight: inherit;
+  margin: 0;
+}

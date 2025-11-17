@@ -1,0 +1,117 @@
+/* ===== 전체 컨테이너 ===== */
+.board-container {
+  max-width: 60rem;
+  margin: 3rem auto;
+  padding: 0 2rem;
+}
+
+.profile-icon {
+  position: relative;
+  margin-left: 2.5rem;
+}
+
+
+/* ===== 인사말 + 버튼 ===== */
+.board-header {
+  position: relative; /* 버튼을 오른쪽 상단에 배치하기 위함 */
+  margin-bottom: 2.5rem;
+  text-align: center; /* 인사말 가운데 정렬 */
+}
+
+.greeting {
+  font-size: 1.8rem;
+  line-height: 1.5;
+  color: #333;
+}
+
+.greeting strong {
+  font-weight: bold;
+}
+
+/* 게시글 작성 버튼 */
+.create-btn {
+  position: absolute;
+  top: 0;
+  right: 0;
+  background-color: #ACA0EB;
+  color: white;
+  border: none;
+  border-radius: 0.6rem;
+  font-size: 1.4rem;
+  padding: 0.8rem 1.6rem;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+.create-btn:hover {
+  background-color: #9387e0;
+}
+
+/* ===== 게시글 카드 ===== */
+.board-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+}
+
+.board-item {
+  background-color: white;
+  border-radius: 0.8rem;
+  padding: 1.5rem;
+  box-shadow: 0 0 4px rgba(0, 0, 0, 0.1);
+  transition: box-shadow 0.2s;
+  cursor: pointer;
+}
+
+.board-item:hover {
+  box-shadow: 0 0 8px rgba(0, 0, 0, 0.15);
+}
+
+/* 제목 */
+.board-title {
+  font-size: 1.8rem;
+  font-weight: bold;
+  margin-bottom: 0.8rem;
+  color: #222;
+}
+
+/* 좋아요, 댓글, 조회수 (왼쪽 정렬) */
+.board-meta {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+  font-size: 1.3rem;
+  color: #666;
+  margin-bottom: 1rem;
+}
+
+.board-date {
+  margin-left: auto; /* 오른쪽 정렬 */
+  color: #999;
+  font-size: 1.2rem;
+}
+
+/* 작성자 정보 */
+.board-author {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+}
+
+.author-img {
+  width: 2.8rem;
+  height: 2.8rem;
+  border-radius: 50%;
+}
+
+.author-name {
+  font-size: 1.4rem;
+  color: #333;
+}
+
+.end-message {
+  text-align: center;
+  color: #888;
+  padding: 20px 0;
+  font-size: 1.4rem;
+}
