@@ -138,9 +138,11 @@ function renderPagination(totalPages, activePage) {
  */
 async function loadCommentPage(page) {
   try {
-    const res = await getRequest(`/boards/${boardId}?page=${page}&size=${size}`, true);
+    const res = await getRequest(`/boards/${boardId}/comments?page=${page}&size=${size}`);
 
-    const commentsPage = res.data.comments;
+    console.log(res);
+
+    const commentsPage = res.data;
 
     currentPage = commentsPage.page;
     totalPages = commentsPage.total_pages;
@@ -149,7 +151,7 @@ async function loadCommentPage(page) {
     renderPagination(totalPages, currentPage);
 
   } catch (err) {
-    console.error("❌ 댓글 페이지 로드 실패:", err);
+    console.error("댓글 페이지 로드 실패:", err);
   }
 }
 
@@ -163,31 +165,23 @@ commentSubmit.addEventListener("click", async () => {
   try {
 
     if (editingCommentId) {
-      await patchRequest(API_URL + `/comments/${editingCommentId}`, 
-        { content },
-        true
-      );
+      await patchRequest(API_URL + `/comments/${editingCommentId}`, { content }, true);
 
       editingCommentId = null;
       commentSubmit.textContent = "댓글 등록";
       commentSubmit.classList.remove("editing");
       commentInput.value = "";
 
-      loadBoardDetail();
+      loadCommentPage(currentPage);
       return;
     }
 
-    await postRequest(API_URL + `/comments`,
-      {
-        boardId,
-        content
-      },
-      true
-    );
+    await postRequest(API_URL + `/comments`, {boardId, content}, true);
+    commentCountEl.textContent = Number(commentCountEl.textContent) + 1;
 
     commentInput.value = "";
-    const res = await getRequest(`/boards/${boardId}?page=0&size=${size}`, true);
-    const lastPage = res.data.comments.total_pages - 1;
+    const res = await getRequest(`/boards/${boardId}/comments?page=0&size=${size}`);
+    const lastPage = res.data.total_pages - 1;
 
     currentPage = lastPage;
     await loadCommentPage(lastPage);
@@ -198,7 +192,6 @@ commentSubmit.addEventListener("click", async () => {
         lastComment.scrollIntoView({ behavior: "smooth", block: "center" });
       }
     }, 50);
-    loadBoardDetail();
 
   } catch (err) {
     console.error("댓글 등록 실패:", err);
@@ -220,7 +213,8 @@ commentList.addEventListener("click", (e) => {
     onConfirm: async () => {
       try {
         await deleteRequest(API_URL + `/comments/${commentId}`, true);
-        loadBoardDetail();
+        commentCountEl.textContent = Number(commentCountEl.textContent) - 1;
+        loadCommentPage(currentPage);
       } catch (err) {
         console.error("댓글 삭제 실패:", err);
       }
