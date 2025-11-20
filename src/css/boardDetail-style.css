@@ -39,7 +39,6 @@
 }
 
 .action-btns button {
-  display: none;
   margin-left: 0.5rem;
   border: 0.1rem solid #ccc;
   padding: 0.5rem 1.5rem;
@@ -105,6 +104,17 @@
   color: #666;
 }
 
+.like-icon {
+  width: 28px;
+  height: 28px;
+  cursor: pointer;
+  transition: transform 0.15s ease;
+}
+
+.like-btn:hover .like-icon {
+  transform: scale(1.1);
+}
+
 /* ===== 댓글 작성 ===== */
 .comment-section {
   display: flex;
@@ -160,13 +170,12 @@
 
 .comment-content {
   margin-top: 1rem;
-  margin-left: 4rem; /* 프로필 아래로 자연스럽게 들여쓰기 */
+  margin-left: 4rem;
   font-size: 1.4rem;
   line-height: 1.5;
 }
 
 .comment-actions button {
-  display: none;
   margin-left: 0.5rem;
   background-color: #f4f4f4;
   border: 0.1rem solid #ccc;
@@ -177,10 +186,6 @@
 
 .comment-actions button:hover {
   background-color: #e4e4e4;
-}
-
-.comment-actions.show button {
-  display: inline-flex;
 }
 
 .end-message {

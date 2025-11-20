@@ -1,6 +1,5 @@
 import { deleteRequest, getRequest, patchRequest } from "../api/api.js";
-import { getUserIdFromToken } from "../utils/jwtUtil.js";
-import { openModal } from "../utils/modal.js";
+import { openModal, showToast } from "../utils/uiUtil.js";
 import { uploadProfileImage } from "../api/upload.js";
 
 const API_URL = "/users";
@@ -150,19 +149,3 @@ function handleError(err) {
     helperText.textContent = "오류가 발생했습니다.";
   }
 }
-
-/**
- * 토스트 메시지 표시
- */
-function showToast(message) {
-  let toast = document.createElement("div");
-  toast.className = "toast-message show";
-  toast.textContent = message;
-  document.body.appendChild(toast);
-
-  setTimeout(() => {
-    toast.classList.remove("show");
-    setTimeout(() => toast.remove(), 300);
-  }, 2000);
-}
-

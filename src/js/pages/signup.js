@@ -1,10 +1,10 @@
 import { postRequest } from "../api/api.js";
 import { uploadProfileImage } from "../api/upload.js";
+import { handleServerError } from "../errors/errorHandlers.js";
 
 const API_URL = "/auth/signup";
 
 const signupBtn = document.getElementById("signup-btn");
-const backBtn = document.getElementById("back-btn");
 const toLoginBtn = document.getElementById("signup-move-login");
 
 const emailInput = document.getElementById("email");
@@ -15,6 +15,18 @@ const profileInput = document.getElementById("profile");
 const profilePreview = document.getElementById("profile-preview");
 
 let selectedImageFile = null;
+
+const errorInputMap = {
+  email_duplicate: emailInput,
+  email_invalid: emailInput,
+  nickname_duplicate: nicknameInput,
+  nickname_max_10: nicknameInput,
+  nickname_no_space: nicknameInput,
+  password_invalid: pwInput,
+  password_rule_violation: pwInput,
+  password_mismatch: pwConfirmInput,
+  password_required: pwInput,
+};
 
 /**
  * 입력 필드의 에러 메시지 표시
@@ -99,36 +111,7 @@ signupBtn.addEventListener("click", async () => {
     }
 
   } catch (err) {
-
-    const msg = err.message;
-
-    switch (msg) {
-      case "email_duplicate":
-        return showError(emailInput, "중복된 이메일입니다.");
-
-      case "email_invalid":
-        return showError(emailInput, "올바른 이메일 주소 형식을 입력해주세요.(예:example@example.com)");
-
-      case "nickname_duplicate":
-        return showError(nicknameInput, "이미 사용 중인 닉네임입니다.");
-      
-      case "nickname_max_10":
-        return showError(nicknameInput, "닉네임은 최대 10자 까지 작성 가능합니다. ")
-
-      case "nickname_no_space":
-        return showError(nicknameInput, "띄어쓰기를 없애주세요")
-
-      case "password_invalid":
-        return showError(pwInput, "비밀번호 형식이 올바르지 않습니다.");
-
-      case "password_mismatch":
-        return showError(pwConfirmInput, "비밀번호가 다릅니다.");
-
-      case "password_rule_violation":
-        return showError(pwInput, "비밀번호 규칙을 만족하지 않습니다. (영문대문자+영문소문자+숫자+특수문자 포함)");
-
-      default:
-        alert("예기치 못한 오류가 발생했습니다.");
-    }
-  }
+  const serverCode = err.message;
+  handleServerError(serverCode);
+}
 });

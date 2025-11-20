@@ -25,26 +25,32 @@ document.addEventListener("DOMContentLoaded", () => {
  * 게시글 리스트 DOM 추가
  */
 function appendBoardItems(boards) {
+  let html = "";
   boards.forEach((board) => {
-    const item = `
-      <article class="board-item" data-id="${board.id}">
+    const popularClass = board.view_count > 100 ? "popular" : ""; 
+    html += `
+      <article class="board-item ${popularClass}" data-id="${board.id}">
         <h2 class="board-title">${board.title}</h2>
-
+        
+        <div class="content">
+          <span>${board.content}</span>
+        </div>
+        
         <div class="board-meta">
           <span>좋아요 ${board.like_count}</span>
           <span>댓글 ${board.comment_count}</span>
           <span>조회수 ${board.view_count}</span>
-          <span class="board-date">${formatDate(board.created_date)}</span>
         </div>
-
+        
         <div class="board-author">
           <img src="${board.author_profile_image ?? "../assets/default-profile.png"}" class="author-img">
           <span class="author-name">${board.author_nickname}</span>
+          <span class="board-date">${formatDate(board.created_date)}</span>
         </div>
       </article>
     `;
-    boardListContainer.insertAdjacentHTML("beforeend", item);
   });
+  boardListContainer.insertAdjacentHTML("beforeend", html);
 }
 
 // 게시글 상세 이동

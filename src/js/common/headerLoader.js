@@ -2,6 +2,7 @@ import { getRequest, postRequest } from "../api/api.js";
 import { requireLogin } from "../utils/auth.js";
 
 loadHeader();
+injectGlobalModal();
 
 // 공통 헤더 로드
 async function loadHeader() {
@@ -25,7 +26,6 @@ async function loadHeader() {
  * 프로필
  */
 async function loadUserProfile() {
-  if (!requireLogin()) return;
   try {
     const res = await getRequest("/users", true);
     const user = res.data;
@@ -43,6 +43,28 @@ async function loadUserProfile() {
  * 헤더 내부 기능
  */
 function initHeaderEvents() {
+
+  // 회원정보 수정
+  const profileUpdateLink = document.querySelector(".profile-menu li:nth-child(1) a");
+  if (profileUpdateLink) {
+    profileUpdateLink.addEventListener("click", (e) => {
+      if (!requireLogin()) {
+        e.preventDefault();
+        return;
+      }
+    });
+  }
+
+  // 비밀번호 변경
+  const passwordUpdateLink = document.querySelector(".profile-menu li:nth-child(2) a");
+  if (passwordUpdateLink) {
+    passwordUpdateLink.addEventListener("click", (e) => {
+      if (!requireLogin()) {
+        e.preventDefault();
+        return;
+      }
+    });
+  }
 
   // 게시글 리스트
   const homeLogo = document.querySelector("header h1");
@@ -76,4 +98,14 @@ function initHeaderEvents() {
       backBtn.addEventListener("click", () => history.back());
     }
   }
+}
+
+// 모달
+async function injectGlobalModal() {
+  if (document.getElementById("modal")) return;
+
+  const res = await fetch("../components/modal.html");
+  const html = await res.text();
+
+  document.body.insertAdjacentHTML("beforeend", html);
 }

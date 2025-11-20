@@ -20,7 +20,7 @@
           <span class="author-name">더미 작성자1</span>
           <span class="board-date">2025-11-10 09:00</span>
         </div>
-        <div class="action-btns">
+        <div class="action-btns only-owner hidden">
           <button class="edit-btn">수정</button>
           <button class="delete-btn">삭제</button>
         </div>
@@ -72,7 +72,7 @@
               <span class="comment-date">2025-11-10 09:00</span>
             </div>
           </div>
-          <div class="comment-actions">
+          <div class="comment-actions only-owner hidden">
             <button class="edit-btn">수정</button>
             <button class="delete-btn">삭제</button>
           </div>
@@ -82,19 +82,6 @@
     </section>
     <div class="comment-pagination"></div>
   </main>
-
-  <div id="modal" class="modal">
-    <div class="modal-popup">
-        <h3 id="modal-title">정말 삭제하시겠습니까?</h3>
-        <p id="modal-desc">삭제한 내용은 복구할 수 없습니다.</p>
-
-        <div class="modal-btn-group">
-          <button id="modal-cancel" class="modal-btn cancel">취소</button>
-          <button id="modal-confirm" class="modal-btn confirm">확인</button>
-        </div>
-    </div>
-  </div>
-
   <script type="module" src="../js/common/headerLoader.js"></script>
   <script type="module" src="../js/pages/boardDetail.js"></script>
 </body>
