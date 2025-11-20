@@ -1,5 +1,6 @@
 import { patchRequest } from "../api/api.js";
 import { showToast } from "../utils/uiUtil.js";
+import { errorMessageMap } from "../errors/errorMessages.js";
 
 const API_URL = `/users/password`;
 
@@ -11,17 +12,6 @@ const helperPassword = document.getElementById("password-helper");
 const helperConfirm = document.getElementById("password-confirm-helper");
 
 const editBtn = document.getElementById("edit-btn");
-
-/**
- * 서버 에러 코드 → 사용자 친화적 메시지로 매핑
- */
-const errorMessageMap = {
-  password_required: "비밀번호를 입력해주세요.",
-  password_mismatch: "비밀번호가 일치하지 않습니다.",
-  password_same_as_old: "이전 비밀번호와 동일합니다.",
-  password_rule_violation:
-    "대문자, 소문자, 숫자, 특수문자 각각 최소 1개 포함, 8~20자로 입력해주세요.",
-};
 
 
 /**
@@ -61,7 +51,7 @@ editBtn.addEventListener("click", async (e) => {
       return;
     }
 
-    helperPassword.textContent = "서버 오류가 발생했습니다.";
+    helperPassword.textContent = errorMessageMap[serverCode];
   }
 });
 
