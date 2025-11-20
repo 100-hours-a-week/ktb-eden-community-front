@@ -2,6 +2,7 @@ import { getRequest, postRequest } from "../api/api.js";
 import { requireLogin } from "../utils/auth.js";
 
 loadHeader();
+injectGlobalModal();
 
 // 공통 헤더 로드
 async function loadHeader() {
@@ -76,4 +77,14 @@ function initHeaderEvents() {
       backBtn.addEventListener("click", () => history.back());
     }
   }
+}
+
+// 모달
+async function injectGlobalModal() {
+  if (document.getElementById("modal")) return;
+
+  const res = await fetch("../components/modal.html");
+  const html = await res.text();
+
+  document.body.insertAdjacentHTML("beforeend", html);
 }

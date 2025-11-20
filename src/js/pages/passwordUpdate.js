@@ -1,4 +1,5 @@
 import { patchRequest } from "../api/api.js";
+import { showToast } from "../utils/uiUtil.js";
 
 const API_URL = `/users/password`;
 
@@ -63,22 +64,6 @@ editBtn.addEventListener("click", async (e) => {
     helperPassword.textContent = "서버 오류가 발생했습니다.";
   }
 });
-
-/**
- * 토스트 메시지 표시
- */
-function showToast(message) {
-  const toast = document.createElement("div");
-  toast.className = "toast-message show";
-  toast.textContent = message;
-
-  document.body.appendChild(toast);
-
-  setTimeout(() => {
-    toast.classList.remove("show");
-    setTimeout(() => toast.remove(), 300);
-  }, 2000);
-}
 
 
 /**

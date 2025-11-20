@@ -1,7 +1,7 @@
 import { getRequest, postRequest,deleteRequest,patchRequest} from "../api/api.js";
 import { formatDate } from "../utils/dateUtil.js";
 import { getUserIdFromToken } from "../utils/jwtUtil.js";
-import { openModal } from "../utils/modal.js";
+import { openModal } from "../utils/uiUtil.js";
 
 const myUserId = getUserIdFromToken();
 const urlParams = new URLSearchParams(location.search);
