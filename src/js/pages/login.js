@@ -49,6 +49,16 @@ loginBtn.addEventListener("click", async () => {
   }
 });
 
+// 게시글 리스트 이동(비회원)
+const homeLogo = document.querySelector("header h1");
+if (homeLogo) {
+  homeLogo.style.cursor = "pointer";
+  homeLogo.addEventListener("click", () => {
+    location.href = "./boardList.html";
+  });
+}
+
+
 /**
  * 회원가입 페이지 이동
  */
