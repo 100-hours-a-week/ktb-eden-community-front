@@ -22,31 +22,35 @@ header {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  width: 90%;
+  max-width: 1200px;
+  margin: 0 auto;
   padding: 0 1.6rem;
   height: 4rem;
-
-  max-width: 100rem;
-  margin: 0 auto;
   position: relative;
 }
+
 
 /* 제목을 중앙 고정 */
 .header-content h1 {
   position: absolute;
   left: 50%;
   transform: translateX(-50%);
-  font-size: 3.2rem;
+  font-size: 2.7rem;
   font-weight: 400;
   margin: 0;
 }
 
-/* 왼쪽/오른쪽 영역 */
 .header-left,
 .header-right {
+  position: relative;
   display: flex;
   align-items: center;
-  justify-content: center;
-  width: 100%;       /* 버튼 영역 최소 너비 */
+  gap: 1.5rem;
+}
+
+.header-right {
+  margin-left: auto;
 }
 
 /* 작은 화면에서도 버튼이 절대 안 사라지도록 */
@@ -87,9 +91,86 @@ button {
   text-align: left;
 }
 
+/* 토글 */
+.toggle-label {
+  font-size: 1.4rem;
+}
+
+.ios-toggle-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin-left: 2.5rem;
+  height: 3rem;
+}
+
+.ios-toggle {
+  position: relative;
+  width: 44px;
+  height: 24px;
+  display: inline-block;
+}
+
+.ios-toggle input {
+  display: none;
+}
+
+.ios-toggle .slider {
+  position: absolute;
+  background: #ccc;
+  border-radius: 24px;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  transition: 0.3s;
+}
+
+.ios-toggle .slider::before {
+  content: "";
+  position: absolute;
+  height: 20px;
+  width: 20px;
+  left: 2px;
+  top: 2px;
+  background: white;
+  border-radius: 50%;
+  transition: 0.3s;
+}
+
+/* 켜짐 상태 */
+.ios-toggle input:checked + .slider {
+  background: #4cd964;
+
+}
+
+.ios-toggle input:checked + .slider::before {
+  transform: translateX(20px);
+}
+
+.pet-count-btn {
+  width: 26px;
+  height: 26px;
+  border-radius: 6px;
+  border: none;
+  background: #e8e8e8;
+  font-size: 1.6rem;
+  cursor: pointer;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+
+.pet-count-btn:active {
+  background: #ddd;
+}
+
+
 /* ===== 뒤로가기 버튼 ===== */
 .back-btn {
   background: none;
+  margin-left: 2.5rem;
   border: none;
   font-size: 2.5rem;
   cursor: pointer;
@@ -163,30 +244,47 @@ button {
 
 /* 확인 버튼 */
 .modal-btn.confirm {
-  background: #C9B7FF; /* 디자인 보라색 */
-  color: #fff;
+  background: #1eff004b;
+  color: black;
 }
 
-/* 프로필 드롭다운 */
-.profile-wrapper {
+
+/* 아이콘을 모두 동일한 flex-item으로 취급 */
+.profile-wrapper,
+.message-icon,
+.notification-wrapper {
   position: relative;
-  display: inline-block;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
 }
 
-.profile-icon {
-  position: static;
+/* 모든 아이콘 이미지 block 처리 + 동일 크기 */
+.profile-icon,
+.message-icon,
+.notifications-icon {
   width: 3rem;
   height: 3rem;
   border-radius: 50%;
+  display: block;
+  object-fit: cover;
   cursor: pointer;
 }
 
-/* 드롭다운 메뉴 */
+.header-profile-nickname {
+  font-size: 1.3rem;
+  color: #555;
+  list-style: none;
+  margin-left: 0.3rem;
+  cursor: pointer;
+}
+
+/* 프로필 드롭다운 */
 .profile-menu {
   display: none;
   position: absolute;
   right: 0;
-  top: 3.5rem;
+  top: 100%;
 
   background: white;
   width: 14rem;
@@ -201,8 +299,16 @@ button {
   z-index: 9999;
 }
 
-.profile-menu li {
+.profile-menu a {
+  display: block;
+  width: 100%;
   padding: 1rem;
+  box-sizing: border-box;
+  color: inherit;
+  text-decoration: none;
+}
+
+.profile-menu li {
   font-size: 1.4rem;
   cursor: pointer;
   color: #333;
@@ -213,10 +319,10 @@ button {
 }
 
 /* hover 시 드롭다운 보이기 */
-.profile-wrapper:hover .profile-menu {
+.profile-wrapper:hover .profile-menu,
+.profile-wrapper:focus-within .profile-menu {
   display: block;
 }
-
 
 h1, h2, h3, h4, h5, h6 {
   font-size: inherit;
@@ -224,6 +330,182 @@ h1, h2, h3, h4, h5, h6 {
   margin: 0;
 }
 
+/* ===== 알림 ===== */
+.notification-menu {
+  display: none;
+  position: absolute;
+  right: 0;
+  top: 100%;
+  width: 20rem;
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 0.6rem;
+  box-shadow: 0 0.4rem 0.9rem rgba(0,0,0,0.1);
+  padding: 0.6rem 0;
+  list-style: none;
+  z-index: 9999;
+  margin: 0;
+}
+
+.notification-menu li {
+  padding: 1rem;
+  font-size: 1.3rem;
+  border-bottom: 1px solid #f2f2f2;
+  cursor: pointer;
+}
+
+.notification-menu li:last-child {
+  border-bottom: none;
+}
+
+.notification-menu li:hover {
+  background-color: #f5f5f5;
+}
+
+/* hover 시 표시 */
+.notification-wrapper:hover .notification-menu {
+  display: block;
+}
+
+/* ====== 사이드바 기본 ====== */
+.sidebar {
+  width: 240px;
+  min-height: 100vh;
+  background: #ffffff;
+  border-right: 1px solid #ececec;
+  padding: 2rem 1.6rem;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 200;
+
+  transform: translateX(-100%);
+  transition: transform 0.3s ease;
+}
+
+.sidebar.open {
+  transform: translateX(0);
+}
+
+/* ====== 헤더 영역 ====== */
+.sidebar-header h2 {
+  margin-top: 20%;
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 2rem;
+  color: #444;
+}
+
+/* 섹션 전체 */
+.sidebar-section {
+  margin-bottom: 2.8rem;
+}
+
+/* 섹션 제목 h3 */
+.sidebar-section h3 {
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: #444;
+  margin: 2rem 0 1rem 0;
+  padding-left: 0.2rem;
+}
+
+/* 섹션 구분선 */
+.sidebar-section h3:not(:first-child) {
+  border-top: 1px solid #e6e6e6;
+  padding-top: 1.8rem;
+}
+
+/* 항목 */
+.sidebar-section li {
+  list-style: none;
+  margin-bottom: 0.8rem;
+}
+
+.sidebar-section li a {
+  text-decoration: none;
+  font-size: 1.45rem;
+  display: block;
+  padding: 0.8rem 1rem;
+  border-radius: 0.6rem;
+  color: #333;
+  transition: background 0.2s, color 0.2s;
+}
+
+/* hover */
+.sidebar-section li a:hover {
+  background: #f0ecff;
+  color: #6a5acd;
+}
+
+/* active */
+.sidebar-section li a.active {
+  background: #ebe5ff;
+  color: #6544d0;
+  font-weight: 600;
+}
+
+
+/* ====== 사이드바 토글 버튼 ====== */
+.sidebar-toggle {
+  position: fixed;
+  top: 0.5rem;
+  left: 0.5rem;
+  z-index: 300;
+  background: white;
+  border: none;
+  padding: 0.6rem 0.7rem;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+}
+
+/* ===== 토스트 메시지 ===== */
+.toast-message {
+  position: fixed;
+  bottom: 2rem;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #3ded8656;
+  color: black;
+  padding: 1rem 2rem;
+  border-radius: 0.5rem;
+  font-size: 1.4rem;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s;
+}
+.toast-message.show {
+  opacity: 1;
+  visibility: visible;
+}
+
+.pet-container {
+  display: block;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100vh;
+  pointer-events: none;
+  overflow: visible;
+  z-index: -1;
+}
+
+.pet-container.visible {
+  display: none;
+}
+
+.pet {
+  position: absolute;
+  left: -80px;
+  animation: walk linear infinite;
+}
+
+@keyframes walk {
+  0% { left: -80px; }
+  100% { left: 110%; }
+}
 
 .hidden {
   display: none !important;

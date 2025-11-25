@@ -1,0 +1,104 @@
+.dm-container {
+  position: relative;
+  width: 100%;
+  max-width: 60rem;
+  margin: 1rem auto;
+  padding: 3rem 2.4rem;
+  border-radius: 1.2rem;
+  background: white;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.07);
+}
+
+.dm-title {
+  font-size: 2.2rem;
+  font-weight: 700;
+  margin-bottom: 1.6rem;
+}
+
+.dm-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.dm-item {
+  display: flex;
+  align-items: center;
+  padding: 1.2rem 0;
+  border-bottom: 1px solid #eee;
+  cursor: pointer;
+  gap: 1.2rem;
+}
+
+.dm-item:hover {
+  background: #fafafa;
+}
+
+.dm-profile {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.dm-text {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.dm-line {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.dm-name {
+  font-size: 1.6rem;
+  font-weight: 600;
+}
+
+.dm-time {
+  font-size: 1.2rem;
+  color: #999;
+}
+
+.dm-preview {
+  font-size: 1.35rem;
+  color: #777;
+
+  display: -webkit-box;
+  -webkit-line-clamp: 2;   /* ★ 최대 2줄 */
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: normal;     /* 줄바꿈 허용 */
+}
+
+.dm-right {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.4rem;
+  min-width: 45px;
+
+}
+
+.dm-unread-count {
+  min-width: 22px;
+  height: 22px;
+  padding: 0 6px;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  background: #4fa3ff;
+  color: white;
+  font-size: 1.2rem;
+  font-weight: 700;
+
+  border-radius: 999px;
+  line-height: 1;
+}
