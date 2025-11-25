@@ -38,10 +38,6 @@ const createBtn = document.querySelector(".create-btn");
       location.href = "./boardCreate.html";
 });
 
-let cursorId = null;
-let isLoading = false;
-let hasNext = true;
-
 document.addEventListener("DOMContentLoaded", () => {
     boardListContainer.innerHTML = "";
     loadMoreBoards()
@@ -53,26 +49,48 @@ document.addEventListener("DOMContentLoaded", () => {
 function appendBoardItems(boards) {
   let html = "";
   boards.forEach((board) => {
-    const popularClass = board.view_count > 100 ? "popular" : ""; 
+    const popularClass = board.view_count >= 100 || board.like_count >= 10 || board.comment_count >= 30
+    ? "popular" : "";
+    const likeIconSrc = board.liked_by_me ? "../assets/laptop.png" :  "../assets/flame.png";
+    const popularBadge = popularClass ? `<div class="popular-badge">🔥</div>` : "";
+    const contentClass = board.image ? "content" : "content no-image";
+    const hasImage = board.image;
+    const boardImageBlock = board.image 
+      ? `
+      <div class="board-image">
+        <img src="${board.image}" class="board-img">
+      </div>
+      ` : "";
+
     html += `
-      <article class="board-item ${popularClass}" data-id="${board.id}">
-        <h2 class="board-title">${board.title}</h2>
-        
-        <div class="content">
-          <span>${board.content}</span>
-        </div>
-        
-        <div class="board-meta">
-          <span>좋아요 ${board.like_count}</span>
-          <span>댓글 ${board.comment_count}</span>
-          <span>조회수 ${board.view_count}</span>
-        </div>
-        
+    <article class="board-item ${popularClass} ${hasImage ? "has-image" : "no-image"}" data-id="${board.id}">
+    ${popularBadge}
+    <h2 class="board-title">${board.title}</h2>
+    ${boardImageBlock}
+    <div class="${contentClass}">
+      <span>${board.content}</span>
+    </div>
+    
+    <div class="card-header">
         <div class="board-author">
           <img src="${board.author_profile_image ?? "../assets/default-profile.png"}" class="author-img">
           <span class="author-name">${board.author_nickname}</span>
-          <span class="board-date">${formatDate(board.created_date)}</span>
         </div>
+        <div class="board-meta">
+          <div class="meta-item">
+            <img src="${likeIconSrc}" class="meta-icon" />
+            <span>${board.like_count}</span>
+          </div>
+          <div class="meta-item">
+            <img src="../assets/visibility_24dp_000000_FILL0_wght400_GRAD0_opsz24.svg" class="meta-icon" />
+            <span>${board.view_count}</span>
+          </div>
+          <div class="meta-item">
+            <img src="../assets/comment_24dp_000000_FILL0_wght400_GRAD0_opsz24.svg" class="meta-icon" />
+            <span>${board.comment_count}</span>
+          </div>
+        </div>
+        <span class="board-date">${formatDate(board.created_date)}</span>
       </article>
     `;
   });
@@ -128,7 +146,6 @@ async function loadMoreBoards() {
 
   isLoading = false;
 }
-
 
 /**
  * 무한스크롤 옵저버
