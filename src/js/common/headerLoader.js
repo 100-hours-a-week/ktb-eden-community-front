@@ -6,6 +6,13 @@ loadHeader();
 injectGlobalModal();
 injectSidebar();
 
+// 임시 mock 알림객체
+const mockNotifications = [
+  { message: "💬 누군가 댓글을 남겼어요!", boardId: 43 },
+  { message: "👥 새로운 팔로워가 생겼습니다!", userId: 30 },
+  { message: "🚀 좋아요 10개를 돌파했어요!", boardId: 42 },
+];
+
 // 공통 헤더 로드
 async function loadHeader() {
   const headerContainer = document.getElementById("header");
@@ -13,13 +20,14 @@ async function loadHeader() {
   if (!headerContainer) return;
 
   const res = await fetch("../components/header.html");
-  const html = await res.text();
+  let html = await res.text();
   headerContainer.innerHTML = html;
-
+  
   initHeaderEvents();
   if (token) {
     setTimeout(() => {
       loadUserProfile();
+      loadMockNotifications(); // 기능구현 까지 임시
     }, 50);
   }
 }
@@ -33,13 +41,68 @@ async function loadUserProfile() {
     const user = res.data;
 
     const headerProfile = document.getElementById("header-profile");
+    const headerProfileNickname = document.querySelector(".header-profile-nickname");
 
     if (user.profile_image) {
       headerProfile.src = user.profile_image;
     }
+    headerProfileNickname.textContent = user.nickname;
   } catch (e) {
   }
 }
+
+/**
+ * 🔔 알림 로드 (백엔드 없는 프론트 전용 Mock)
+ */
+function loadMockNotifications() {
+  const menu = document.querySelector(".notification-menu");
+  if (!menu) return;
+
+  menu.innerHTML = ""; 
+
+  mockNotifications.forEach((n) => {
+    const li = document.createElement("li");
+    li.textContent = n.message;
+
+    li.addEventListener("click", (e) => {
+      e.stopPropagation();
+
+      if (n.boardId) {
+        location.href = `./boardDetail.html?id=${n.boardId}#comments`;
+      } else if (n.userId) {
+        location.href = `./myPage.html?id=${n.userId}`;
+      }
+    });
+
+    menu.appendChild(li);
+  });
+}
+
+// 알림 로딩
+// async function loadNotifications() {
+//   try {
+//     const res = await getRequest("/notifications/preview", true);
+
+//     const menu = document.querySelector(".notification-menu");
+//     menu.innerHTML = "";
+
+//     if (res.data.length === 0) {
+//       menu.innerHTML = `<li class="empty">알림이 없습니다.</li>`;
+//       return;
+//     }
+
+//     res.data.forEach(noti => {
+//       menu.insertAdjacentHTML(
+//         "beforeend",
+//         `<li>${noti.message}</li>`
+//       );
+//     });
+
+//   } catch (err) {
+//     console.error("알림 로드 실패:", err);
+//   }
+// }
+
 
 /**
  * 헤더 내부 기능
@@ -86,6 +149,15 @@ function initHeaderEvents() {
       localStorage.removeItem("accessToken");
       alert("로그아웃 되었습니다.");
       location.href = "./login.html";
+    });
+  }
+
+  // 메시지
+  const messageBtn = document.getElementById("message-btn");
+  if (messageBtn) {
+    messageBtn.addEventListener("click", () => {
+      if (!requireLogin()) return;
+      location.href = "./messageList.html";
     });
   }
 
@@ -154,6 +226,15 @@ function initHeaderEvents() {
       backBtn.addEventListener("click", () => history.back());
     }
   }
+
+  if (window.location.pathname.includes("signup.html")) {
+      const title = document.querySelector("header h1");
+      if (title) {
+          title.textContent = "비 회원으로 보기";
+      }
+      const headerRight = document.querySelector(".header-right");
+      if (headerRight) headerRight.style.display = "none";
+  }
 }
 
 // 모달
@@ -208,3 +289,9 @@ function initSidebarEvents() {
   });
 }
 
+// 뒤로가기 리로드
+window.addEventListener("pageshow", function(event) {
+  if (event.persisted || performance.getEntriesByType("navigation")[0].type === "back_forward") {
+    location.reload();
+  }
+});

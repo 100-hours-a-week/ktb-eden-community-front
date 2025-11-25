@@ -164,6 +164,7 @@ commentSubmit.addEventListener("click", async () => {
 
   try {
 
+    if(!requireLogin()) return;
     if (editingCommentId) {
       await patchRequest(API_URL + `/comments/${editingCommentId}`, { content }, true);
 
@@ -286,6 +287,7 @@ function updateLikeButtonUI() {
  */
 likeBtn.addEventListener("click", async () => {
   try {
+    if(!requireLogin()) return;
     if (!isLiked) {
       await postRequest(`/boards/${boardId}/like`, {}, true);
       likeEl.textContent = Number(likeEl.textContent) + 1;

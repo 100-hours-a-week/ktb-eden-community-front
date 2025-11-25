@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>메시지</title>
+  <link rel="stylesheet" href="../css/common.css">
+  <link rel="stylesheet" href="../css/messageRoom-style.css">
+</head>
+<body>
+
+  <div id="header"></div>
+
+  <!-- ===== DM 채팅방 ===== -->
+  <main class="dm-room">
+
+    <!-- 상단 헤더 -->
+    <div class="dm-room-header">
+      <div class="dm-room-user">
+        <img src="../assets/default-profile.png" class="dm-room-avatar">
+        <span class="dm-room-name">Aiden</span>
+      </div>
+    </div>
+
+    <!-- 채팅 영역 -->
+    <div id="dm-messages" class="dm-messages">
+      
+      <!-- 날짜 라벨 -->
+      <div class="dm-date-label">오늘</div>
+
+      <!-- 상대 메시지 -->
+      <div class="dm-message-row">
+        <img src="../assets/default-profile.png" class="dm-msg-avatar">
+        <div class="dm-msg-bubble other">
+          안녕하세요 eden!
+        </div>
+      </div>
+
+      <!-- 내 메시지 -->
+      <div class="dm-message-row my">
+        <div class="dm-msg-bubble mine">
+          네 안녕하세요 🙌
+        </div>
+      </div>
+
+    </div>
+
+    <!-- 입력창 -->
+    <div class="dm-input-wrapper">
+      <input id="dm-input" type="text" placeholder="메시지 입력...">
+      <button id="dm-send-btn" class="dm-send-btn">
+        <img src="../assets/send_24dp_000000_FILL0_wght400_GRAD0_opsz24.svg">
+      </button>
+    </div>
+
+  </main>
+
+  <script type="module" src="../js/common/headerLoader.js"></script>
+  <script type="module" src="../js/pages/messageRoom.js"></script>
+
+</body>
+</html>
