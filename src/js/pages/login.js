@@ -8,6 +8,8 @@ const passwordInput = document.getElementById("password");
 const helperText = document.getElementById("helper-text");
 const loginBtn = document.getElementById("login-btn");
 const signupBtn = document.getElementById("signup-btn");
+const loginGifPause = document.getElementById("login-gif-pause");
+const loginVid = document.getElementById("login-vid");
 
 /**
  * 하단 에러 표시
@@ -41,13 +43,25 @@ loginBtn.addEventListener("click", async () => {
   try {
     const res = await postRequest(API_URL, { email, password });
     if (res.message === "login_success") {
-      alert("로그인 성공!");
+      loginGifPause.classList.add("hidden");
+      loginVid.classList.remove("hidden");
+
+      loginVid.playbackRate = 2.0;
+      loginVid.currentTime = 0;
+      loginVid.play();
+
       localStorage.setItem("accessToken", res.data.token_dto.access_token);
-      return (location.href = "./boardList.html");
+      setTimeout(() => {
+        location.href = "./boardList.html";
+      }, 1200);
     }
   } catch (err) {
     helperText.textContent = "이메일 또는 비밀번호가 잘못되었습니다.";
   }
+});
+
+document.querySelector(".oauth-kakao").addEventListener("click", () => {
+  alert("카카오 로그인 준비중");
 });
 
 // 게시글 리스트 이동(비회원)
