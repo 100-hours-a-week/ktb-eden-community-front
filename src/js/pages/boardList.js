@@ -5,6 +5,32 @@ import { requireLogin } from "../utils/auth.js";
 const API_URL = "/boards"
 
 const boardListContainer = document.querySelector(".board-list");
+const categoryTitleEl = document.getElementById("category-name");
+
+const urlParams = new URLSearchParams(location.search);
+const category = urlParams.get("category") || "all";
+
+let cursorId = null;
+let isLoading = false;
+let hasNext = true;
+
+
+const categoryMap = {
+  all: "📋 전체 게시판",
+  popular: "🔥 인기 게시글",
+  random: "😁 아무글",
+  it: "👨🏻‍💻 IT",
+  career: "🐣 취준생",
+  fitness: "💪 운동",
+  food: "🍕 쩝쩝박사",
+  following: "👀 구독 게시글",
+  liked: "🚀 좋아요 한 게시글",
+  notice: "📢 공지사항",
+  event: "🎉 이벤트",
+  qna: "❓ Q&A",
+};
+
+categoryTitleEl.textContent = categoryMap[category] ?? "📋 전체 게시판";
 
 const createBtn = document.querySelector(".create-btn");
     createBtn.addEventListener("click", () => {
@@ -69,9 +95,13 @@ async function loadMoreBoards() {
   if (isLoading) return;
   isLoading = true;
 
+  const categoryParam = `category=${category}`;
+
   try {
-    const params = cursorId ? `?cursorId=${cursorId}` : "";
-    const res = await getRequest(`${API_URL}${params}`, true);
+    const baseUrl = cursorId
+      ? `${API_URL}?${categoryParam}&cursorId=${cursorId}&pageSize=15`
+      : `${API_URL}?${categoryParam}&pageSize=15`;
+    const res = await getRequest(baseUrl, true);
 
     if (res.message !== "board_list_success") {
       console.error("게시글 로드 실패:", res);

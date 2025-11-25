@@ -4,6 +4,7 @@ import { spawnPetsFree, spawnOnePet, removeOnePet} from "./pets.js";
 
 loadHeader();
 injectGlobalModal();
+injectSidebar();
 
 // 공통 헤더 로드
 async function loadHeader() {
@@ -164,3 +165,46 @@ async function injectGlobalModal() {
 
   document.body.insertAdjacentHTML("beforeend", html);
 }
+
+// 사이드바
+async function injectSidebar() {
+  if (document.getElementById("sidebar-injected")) return;
+
+  const res = await fetch("../components/sidebar.html");
+  const html = await res.text();
+
+  const wrapper = document.createElement("div");
+  wrapper.id = "sidebar-injected";
+  wrapper.innerHTML = html;
+  document.body.appendChild(wrapper);
+
+  initSidebarEvents();
+}
+
+// 사이드바 열고닫기
+function initSidebarEvents() {
+  const sidebar = document.querySelector(".sidebar");
+  const toggleBtn = document.querySelector(".sidebar-toggle");
+  const overlay = document.querySelector(".sidebar-overlay");
+
+  if (!sidebar || !toggleBtn) return;
+
+  toggleBtn.addEventListener("click", () => {
+    const isOpen = sidebar.classList.toggle("open");
+    if (window.innerWidth < 768) {
+      overlay.classList.toggle("show", isOpen);
+    }
+  });
+
+  overlay.addEventListener("click", () => {
+    sidebar.classList.remove("open");
+    overlay.classList.remove("show");
+  });
+
+  window.addEventListener("resize", () => {
+    if (window.innerWidth >= 768) {
+      overlay.classList.remove("show");
+    }
+  });
+}
+
