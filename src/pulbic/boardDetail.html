@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>게시글 상세 | 아무 말 대잔치</title>
+  <title>게시글 상세 | Eden</title>
   <link rel="stylesheet" href="../css/common.css" />
   <link rel="stylesheet" href="../css/boardDetail-style.css" />
 </head>
@@ -29,7 +29,7 @@
 
     <!-- ===== 게시글 내용 ===== -->
     <section class="board-content">
-      <img src="../assets/dummy-image.png" alt="게시글 이미지" class="board-image" />
+      <img src="../assets/dummy-image.png" alt="게시글 이미지" class="board-image hidden" />
       <p class="board-text">
         무엇을 얘기할까요? 아무말이라면, 삶은 항상 놀라운 모험이라고 생각합니다. 우리는 매일 새로운 경험을 하고 배우며 성장합니다. 때로는 어려움과 도전이 있지만, 그것들이 우리를 더 강하고 지혜롭게 만듭니다. 또한 우리는 주변의 사람들과 연결되며 사랑과 지지를 받습니다. 그래서 우리의 삶은 소중하고 의미가 있습니다.
 자연도 아름다운 이야기입니다. 우리 주변의 자연은 끝없는 아름다움과 신비로움을 담고 있습니다. 산, 바다, 숲, 하늘 등 모든 것이 우리를 놀라게 만들고 감동시킵니다. 자연은 우리의 생명과 안정을 지키며 우리에게 힘을 주는 곳입니다.
@@ -41,16 +41,20 @@
     <!-- ===== 게시글 통계 (좋아요, 조회, 댓글) ===== -->
     <section class="board-stats">
       <div class="stat-item like-btn">
+        <img id="like-icon" class="like-icon">
+        <div id="like-effect"></div>
         <div class="stat-number" id="like-count">1</div>
-        <div class="stat-label">좋아요수</div>
+        <!-- <div class="stat-label">좋아요수</div> -->
       </div>
       <div class="stat-item">
+        <img src="../assets/visibility_24dp_000000_FILL0_wght400_GRAD0_opsz24.svg"/>
         <div class="stat-number" id="view-count">2</div>
-        <div class="stat-label">조회수</div>
+        <!-- <div class="stat-label">조회수</div> -->
       </div>
       <div class="stat-item">
+        <img src="../assets/comment_24dp_000000_FILL0_wght400_GRAD0_opsz24.svg"/>
         <div class="stat-number" id="comment-count">3</div>
-        <div class="stat-label">댓글</div>
+        <!-- <div class="stat-label">댓글</div> -->
       </div>
     </section>
 
@@ -82,6 +86,7 @@
     </section>
     <div class="comment-pagination"></div>
   </main>
+  <div class="pet-container"></div>
   <script type="module" src="../js/common/headerLoader.js"></script>
   <script type="module" src="../js/pages/boardDetail.js"></script>
 </body>

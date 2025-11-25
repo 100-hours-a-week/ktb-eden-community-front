@@ -1,4 +1,5 @@
 import { getRequest, postRequest,deleteRequest,patchRequest} from "../api/api.js";
+import { requireLogin } from "../utils/auth.js";
 import { formatDate } from "../utils/dateUtil.js";
 import { getUserIdFromToken } from "../utils/jwtUtil.js";
 import { openModal } from "../utils/uiUtil.js";
@@ -16,18 +17,17 @@ const dateEl = document.querySelector(".board-date");
 const boardImgEl = document.querySelector(".board-image");
 const contentEl = document.querySelector(".board-text");
 const likeEl = document.getElementById("like-count");
-const likeBtn = document.querySelector(".like-btn");
+const likeBtn = document.querySelector(".like-icon");
 const commentCountEl = document.getElementById("comment-count");
 const viewEl = document.getElementById("view-count");
 
 const commentList = document.getElementById("comment-list");
 const commentInput = document.getElementById("comment-input");
 const commentSubmit = document.getElementById("comment-submit");
-const commentEditBtn = document.getElementById("comment-submit");
 const paginationContainer = document.querySelector(".comment-pagination");
 
-const boardEditBtn = document.querySelector(".board-header .edit-btn");
-const boardDeleteBtn = document.querySelector(".board-header .delete-btn");
+const ownerActions = document.querySelector(".action-btns.only-owner");
+const ownerActionComment = document.querySelector(".comment-actions.only-owner");
 
 let editingCommentId = null;
 let isLiked = false;
@@ -52,7 +52,15 @@ async function loadBoardDetail() {
     authorEl.textContent = b.author_nickname;
     authorProfileEl.src = b.author_profile_image ?? "../assets/default-profile.png";
     dateEl.textContent = formatDate(b.updated_date);
-    boardImgEl.src = b.image ?? "../assets/dummy-image.png";
+    if (b.image) {
+      boardImgEl.src = b.image;
+      boardImgEl.alt = "게시글 이미지";
+      boardImgEl.classList.remove("hidden");
+    } else {
+      boardImgEl.classList.add("hidden");
+      boardImgEl.removeAttribute("alt");
+      boardImgEl.removeAttribute("src");
+    }
     contentEl.textContent = b.content;
 
     likeEl.textContent = b.like_count;
@@ -60,11 +68,13 @@ async function loadBoardDetail() {
     viewEl.textContent = b.view_count;
 
     isLiked = b.liked_by_me === true;
-    updateLikeButtonUI();
+    updateLikeButtonUI(false);
 
     const isMine = myUserId === Number(b.author_id);
-    boardEditBtn.style.display = isMine ? "inline-block" : "none";
-    boardDeleteBtn.style.display = isMine ? "inline-block" : "none";
+
+    if(isMine) {
+      ownerActions.classList.remove("hidden");
+    }
 
     totalPages = commentsPage.total_pages;
 
@@ -79,6 +89,50 @@ async function loadBoardDetail() {
     console.error("게시글 상세 불러오기 실패:", err);
   }
 }
+
+commentList.addEventListener("click", (e) => {
+  const actionBtn = e.target.closest(".comment-actions button");
+  if (!actionBtn) return;
+
+  const commentId = actionBtn.dataset.id;
+  const isEdit = actionBtn.classList.contains("edit-btn");
+  const isDelete = actionBtn.classList.contains("delete-btn");
+
+  // 댓글 수정
+  if (isEdit) {
+    editingCommentId = commentId;
+
+    const commentEl = actionBtn.closest(".comment-item");
+    const content = commentEl.querySelector(".comment-content").textContent;
+
+    commentInput.value = content;
+
+    commentSubmit.textContent = "댓글 수정";
+    commentSubmit.classList.add("editing");
+
+    commentInput.scrollIntoView({ behavior: "smooth", block: "center" });
+    setTimeout(() => commentInput.focus(), 200);
+
+    return;
+  }
+
+  // 댓글 삭제 (모달)
+  if (isDelete) {
+    openModal({
+      title: "댓글을 삭제하시겠습니까?",
+      message: "삭제한 내용은 복구할 수 없습니다.",
+      onConfirm: async () => {
+        try {
+          await deleteRequest(API_URL + `/comments/${commentId}`, true);
+          commentCountEl.textContent = Number(commentCountEl.textContent) - 1;
+          loadCommentPage(currentPage);
+        } catch (err) {
+          console.error("댓글 삭제 실패:", err);
+        }
+      }
+    });
+  }
+});
 
 /**
  * 댓글 렌더링
@@ -100,7 +154,7 @@ function renderComments(comments) {
           </div>
 
           ${isMine ? `
-            <div class="comment-actions show">
+            <div class="comment-actions only-owner">
               <button class="edit-btn" data-id="${c.id}">수정</button>
               <button class="delete-btn" data-id="${c.id}">삭제</button>
             </div>
@@ -159,11 +213,10 @@ async function loadCommentPage(page) {
  * 댓글 작성, 수정 모드 작성
  */
 commentSubmit.addEventListener("click", async () => {
-  const content = commentInput.value.trim();
-  if (!content) return alert("댓글을 입력하세요!");
-
   try {
-
+    if(!requireLogin()) return;
+    const content = commentInput.value.trim();
+    if (!content) return alert("댓글을 입력하세요!");
     if (editingCommentId) {
       await patchRequest(API_URL + `/comments/${editingCommentId}`, { content }, true);
 
@@ -199,85 +252,48 @@ commentSubmit.addEventListener("click", async () => {
 });
 
 /**
- * 댓글 삭제(모달)
+ * 게시글 수정, 삭제 버튼
  */
-commentList.addEventListener("click", (e) => {
-  const btn = e.target.closest(".delete-btn");
-  if (!btn) return;
+ownerActions.addEventListener("click", (e) => {
+  // 수정
+  if(e.target.classList.contains("edit-btn")) {
+    location.href = `./boardUpdate.html?id=${boardId}`;
+    return;
+  }
 
-  const commentId = btn.dataset.id;
-
-  openModal({
-    title: "댓글을 삭제하시겠습니까?",
-    message: "삭제한 내용은 복구할 수 없습니다.",
-    onConfirm: async () => {
-      try {
-        await deleteRequest(API_URL + `/comments/${commentId}`, true);
-        commentCountEl.textContent = Number(commentCountEl.textContent) - 1;
-        loadCommentPage(currentPage);
-      } catch (err) {
-        console.error("댓글 삭제 실패:", err);
+  // 삭제(모달)
+  if(e.target.classList.contains("delete-btn")) {
+    openModal({
+      title: "게시글을 삭제하시겠습니까?",
+      message: "삭제한 내용은 복구할 수 없습니다.",
+      onConfirm: async () => {
+        try {
+          await deleteRequest(API_URL, true);
+          location.href = "./boardList.html";
+        } catch (err) {
+          console.error("게시글 삭제 실패:", err);
+        }
       }
-    }
-  });
-});
-
-/**
- * 게시글 수정 버튼
- */
-boardEditBtn.addEventListener("click", () => {
-  location.href = `./boardUpdate.html?id=${boardId}`;
-});
-
-/**
- * 게시글 삭제 버튼(모달)
- */
-boardDeleteBtn.addEventListener("click", () => {
-  openModal({
-    title: "게시글을 삭제하시겠습니까?",
-    message: "삭제한 내용은 복구할 수 없습니다.",
-    onConfirm: async () => {
-      try {
-        await deleteRequest(API_URL, true);
-        location.href = "./boardList.html";
-      } catch (err) {
-        console.error("게시글 삭제 실패:", err);
-      }
-    }
-  });
-});
-
-/**
- * 댓글 수정
- */
-commentList.addEventListener("click", (e) => {
-  const btn = e.target.closest(".edit-btn");
-  if (!btn) return;
-
-  const commentId = btn.dataset.id;
-  editingCommentId = commentId;
-
-  const commentEl = btn.closest(".comment-item");
-  const content = commentEl.querySelector(".comment-content").textContent;
-
-  commentInput.value = content;
-
-  commentSubmit.textContent = "댓글 수정";
-  commentSubmit.classList.add("editing");
-
-  commentInput.scrollIntoView({ behavior: "smooth", block: "center" });
-  setTimeout(() => commentInput.focus(), 200);
-
-});
+    });
+  }
+})
 
 /**
  * 좋아요 버튼 UI 수정
  */
-function updateLikeButtonUI() {
+function updateLikeButtonUI(animate = false) {
+  const like_icon = document.getElementById("like-icon");
   if (isLiked) {
-    likeBtn.style.backgroundColor = "#ACA0EB";
+    like_icon.src = "../assets/laptop.png"
+
+    if (animate) {
+      like_icon.classList.add("launch");
+      setTimeout(() => {
+        like_icon.classList.remove("launch");
+      }, 900);
+    }
   } else {
-    likeBtn.style.backgroundColor = "#D9D9D9";
+    like_icon.src = "../assets/flame.png";
   }
 }
 
@@ -286,17 +302,18 @@ function updateLikeButtonUI() {
  */
 likeBtn.addEventListener("click", async () => {
   try {
+    if(!requireLogin()) return;
     if (!isLiked) {
       await postRequest(`/boards/${boardId}/like`, {}, true);
       likeEl.textContent = Number(likeEl.textContent) + 1;
       isLiked = true;
+      updateLikeButtonUI(true);
     } else {
       await deleteRequest(`/boards/${boardId}/like`, true);
       likeEl.textContent = Number(likeEl.textContent) - 1;
       isLiked = false;
+      updateLikeButtonUI(false);
     }
-
-    updateLikeButtonUI();
   } catch (err) {
     console.error("좋아요 처리 실패:", err);
   }

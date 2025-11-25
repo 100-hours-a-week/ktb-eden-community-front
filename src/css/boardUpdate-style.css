@@ -50,8 +50,8 @@
 .submit-btn {
   display: block;
   width: 80%;
-  background-color: #ACA0EB;
-  color: white;
+  background-color: #3ded8656;
+  color: black;
   font-size: 1.6rem;
   font-weight: bold;
   border: none;
@@ -63,5 +63,5 @@
 }
 
 .submit-btn:hover {
-  background-color: #9387e0;
+  background-color: #3ded86;
 }

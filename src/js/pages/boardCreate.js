@@ -1,6 +1,6 @@
 import { postRequest } from "../api/api.js";
 import { uploadBoardImage } from "../api/upload.js";
-
+import { errorMessageMap } from "../errors/errorMessages.js";
 const API_URL = "/boards";
 
 
@@ -68,8 +68,8 @@ document.addEventListener("DOMContentLoaded", () => {
   const title = titleInput.value.trim();
   const content = contentInput.value.trim();
 
-  if (!title) return showError(titleInput, "제목을 입력해주세요.");
-  if (!content) return showError(contentInput, "내용을 입력해주세요.");
+  if (!title) return showError(titleInput, errorMessageMap.title_required);
+  if (!content) return showError(contentInput, errorMessageMap.content_required);
 
   let imageUrl = null;
 
@@ -94,7 +94,6 @@ document.addEventListener("DOMContentLoaded", () => {
       console.log(res);
 
       if (res.message === "board_created_success") {
-        alert("게시글이 등록되었습니다!");
         location.href = "./boardList.html";
       }
     } catch (err) {

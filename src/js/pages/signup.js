@@ -1,6 +1,8 @@
 import { postRequest } from "../api/api.js";
 import { uploadProfileImage } from "../api/upload.js";
+import { errorMessageMap, emailRegex, passwordRegex } from "../errors/errorMessages.js";
 import { handleServerError } from "../errors/errorHandlers.js";
+import { spawnPetsFree } from "../common/pets.js";
 
 const API_URL = "/auth/signup";
 
@@ -31,9 +33,12 @@ const errorInputMap = {
 /**
  * 입력 필드의 에러 메시지 표시
  */
-function showError(input, message) {
+function showError(input, message, color = "red") {
   const helper = input.parentElement.querySelector(".helper-text");
-  if (helper) helper.textContent = message;
+  if (helper) {
+    helper.textContent = message;
+    helper.style.color = color;
+  }
 }
 
 /**
@@ -77,13 +82,13 @@ signupBtn.addEventListener("click", async () => {
   const nickname = nicknameInput.value.trim();
 
 
-  if (!email) return showError(emailInput, "이메일을 입력해주세요.");
-  if (!password) return showError(pwInput, "비밀번호를 입력해주세요.");
-  if (!confirm) return showError(pwConfirmInput, "비밀번호를 한번더 입력해주세요.");
-  if (!nickname) return showError(nicknameInput, "닉네임을 입력해주세요.");
+  if (!email) return showError(emailInput, errorMessageMap.email_required);
+  if (!password) return showError(pwInput, errorMessageMap.password_required);
+  if (!confirm) return showError(pwConfirmInput, errorMessageMap.password_mismatch);
+  if (!nickname) return showError(nicknameInput, errorMessageMap.nickname_required);
 
   if (password !== confirm) {
-    return showError(pwConfirmInput, "비밀번호가 일치하지 않습니다.");
+    return showError(pwConfirmInput, errorMessageMap.password_mismatch);
   }
 
   let imagePath = null;
@@ -111,7 +116,76 @@ signupBtn.addEventListener("click", async () => {
     }
 
   } catch (err) {
-  const serverCode = err.message;
-  handleServerError(serverCode);
+  handleServerError(err.message, errorInputMap, showError);
 }
+});
+
+function updateHelper(input, message, color = "red") {
+  const helper = input.parentElement.querySelector(".helper-text");
+  if (!helper) return;
+  helper.textContent = message;
+  helper.style.color = color;
+}
+
+emailInput.addEventListener("input", () => {
+  const value = emailInput.value.trim();
+
+  if (!value) {
+    return updateHelper(emailInput, errorMessageMap.email_required, "gray");
+  }
+
+  if (!emailRegex.test(value)) {
+    return updateHelper(emailInput, errorMessageMap.email_invalid, "red");
+  }
+
+  updateHelper(emailInput, "사용 가능한 이메일입니다.", "green");
+});
+
+
+pwInput.addEventListener("input", () => {
+  const pw = pwInput.value.trim();
+
+  if (!pw) {
+    return updateHelper(pwInput, errorMessageMap.password_required, "gray");
+  }
+
+  if (!passwordRegex.test(pw)) {
+    return updateHelper(pwInput, errorMessageMap.password_rule_violation, "red");
+  }
+
+  updateHelper(pwInput, "사용 가능한 비밀번호입니다.", "green");
+});
+
+nicknameInput.addEventListener("input", () => {
+  const value = nicknameInput.value.trim();
+
+  if (!value) {
+    return updateHelper(
+      nicknameInput,
+      errorMessageMap.nickname_required,
+      "gray"
+    );
+  }
+
+  if (value.includes(" ")) {
+    return updateHelper(
+      nicknameInput,
+      errorMessageMap.nickname_no_space,
+      "red"
+    );
+  }
+
+  if (value.length > 10) {
+    return updateHelper(
+      nicknameInput,
+      errorMessageMap.nickname_max_10,
+      "red"
+    );
+  }
+  updateHelper(nicknameInput, "사용 가능한 닉네임입니다.", "green");
+});
+
+
+document.addEventListener("DOMContentLoaded", () => {
+  spawnPetsFree(".pet-container", 5);
 });

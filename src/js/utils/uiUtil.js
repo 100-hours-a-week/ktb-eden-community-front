@@ -1,4 +1,4 @@
-export function openModal({ title, message, onConfirm }) {
+export function openModal({ title, message, onConfirm, input = false, defaultValue = "",  }) {
   const modal = document.getElementById("modal");
   const titleEl = document.getElementById("modal-title");
   const descEl = document.getElementById("modal-desc");
@@ -8,17 +8,31 @@ export function openModal({ title, message, onConfirm }) {
   titleEl.textContent = title;
   descEl.textContent = message;
 
-  modal.style.display = "flex";
+  let inputEl = modal.querySelector(".modal-input");
+  if (inputEl) inputEl.remove();
+
+  // 입력창 필요할 때만 추가
+  if (input) {
+    inputEl = document.createElement("input");
+    inputEl.className = "modal-input";
+    inputEl.type = "text";
+    inputEl.value = defaultValue;
+
+    descEl.insertAdjacentElement("afterend", inputEl);
+  }
+
+  modal.classList.add("show");
 
   function close() {
-    modal.style.display = "none";
+    modal.classList.remove("show");
     confirmBtn.removeEventListener("click", confirmHandler);
   }
 
   cancelBtn.onclick = close;
 
   function confirmHandler() {
-    onConfirm();
+    const value = input ? inputEl.value.trim() : null;
+    onConfirm(value);
     close();
   }
 

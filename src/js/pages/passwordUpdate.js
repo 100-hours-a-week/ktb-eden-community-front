@@ -1,6 +1,6 @@
 import { patchRequest } from "../api/api.js";
 import { showToast } from "../utils/uiUtil.js";
-import { errorMessageMap } from "../errors/errorMessages.js";
+import { errorMessageMap, passwordRegex } from "../errors/errorMessages.js";
 
 const API_URL = `/users/password`;
 
@@ -62,12 +62,12 @@ editBtn.addEventListener("click", async (e) => {
 
 function validatePassword(new_password) {
   if (!new_password) {
-    helperPassword.textContent = "비밀번호를 입력해주세요.";
+    helperPassword.textContent = errorMessageMap.password_required;
     return false;
   }
 
-  if (new_password.length < 8 || new_password.length > 20) {
-    helperPassword.textContent = "8~20자로 입력해주세요.";
+  if (!passwordRegex.test(new_password)) {
+    helperPassword.textContent = errorMessageMap.password_rule_violation;
     return false;
   }
 
@@ -80,12 +80,12 @@ function validatePassword(new_password) {
  */
 function validatePasswordConfirm(new_password, confirm) {
   if (!confirm) {
-    helperConfirm.textContent = "비밀번호를 한번 더 입력해주세요.";
+    helperConfirm.textContent = errorMessageMap.password_mismatch;
     return false;
   }
 
   if (new_password !== confirm) {
-    helperConfirm.textContent = "비밀번호와 다릅니다.";
+    helperConfirm.textContent = errorMessageMap.password_mismatch;
     return false;
   }
 

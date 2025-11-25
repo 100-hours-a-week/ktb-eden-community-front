@@ -3,37 +3,38 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>게시글 목록 | 아무 말 대잔치</title>
+  <title>게시글 목록 | Eden</title>
   <link rel="stylesheet" href="../css/common.css" />
   <link rel="stylesheet" href="../css/boardList-style.css" />
 </head>
 <body>
   <div id="header"></div>
   <main class="board-container">
-    <div class="board-header">
-      <p class="greeting">안녕하세요,<br>아무 말 대잔치 <strong>게시판</strong> 입니다.</p>
-      <button class="create-btn">게시글 작성</button>
+    
+    <div class="top-bar">
+      <div class="category-title">
+        <h2 id="category-name">📋 전체 게시판</h2>
+      </div>
+
+      <div class="search-wrapper">
+        <select id="search-filter">
+          <option value="제목">제목</option>
+          <option value="제작처">작성자</option>
+        </select>
+        <input type="text" id="search-input" placeholder="검색어를 입력하세요" />
+        <button class="search-btn">
+          <img src="../assets/search_24dp_000000_FILL0_wght400_GRAD0_opsz24.svg"/>
+        </button>
+      </div>
+      <button class="create-btn">
+        <img src="../assets/add_24dp_000000_FILL0_wght400_GRAD0_opsz24.svg"/>
+      </button>
     </div>
-
     <section class="board-list">
-      <article class="board-item">
-        <h2 class="board-title">제목 1</h2>
-        <div class="board-meta">
-          <span>❤️ 좋아요 10</span>
-          <span>💬 댓글 30</span>
-          <span>👁️ 조회수 30</span>
-          <span class="board-date">2025-11-10 09:00</span>
-        </div>
-        <div class="board-author">
-          <img src="../assets/default-profile.png" alt="작성자 프로필" class="author-img">
-          <span class="author-name">더미 작성자1</span>
-        </div>
-      </article>
     </section>
-
     <div id="observer"></div>
   </main>
-
+  <div class="pet-container"></div>
   <script type="module" src="../js/pages/boardList.js"></script>
   <script type="module" src="../js/common/headerLoader.js"></script>
 </body>

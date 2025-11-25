@@ -1,7 +1,12 @@
+body.login-page {
+  background-color: #ffffff !important;
+}
+
 /* ===== 로그인 ===== */
 .login-Title {
     font-weight: bold;
     font-size: 3.2rem;
+    z-index: 5;
 }
 
 .login-container {
@@ -17,12 +22,40 @@
   font-size: 1.5rem; /* 24px */
 }
 
+.login-animation {
+  width: 150px;
+  height: 150px;
+  margin-bottom: 4.5rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+}
+
+.login-gif {
+  width: 30px;
+  image-rendering: crisp-edges;
+}
+
+.login-animation img {
+  width: 150px;
+  height: 150px;
+  object-fit: contain;
+}
+.login-animation video {
+  width: 200px;
+  height: 200px;
+  object-fit: contain;
+}
+
+
 .login-box {
   padding: 2rem 2.5rem; /* 32px 40px */
   border-radius: 0.625rem; /* 10px */
   border: none;
   width: 30%;
   min-width: 18rem; /* 최소 너비 288px */
+  z-index: 5;
 }
 
 .input-group {
@@ -50,14 +83,41 @@
 #login-btn {
   width: 100%;
   padding: 1rem 0;
-  background-color: #ACA0EB;
-  color: white;
+  background-color: #3ded8656;
+  color: black;
   font-size: 1.4rem;
   margin-top: 0.625rem;
 }
 
 #login-btn.active {
-  background-color: #7F6AEE;
+  background-color: #3ded86;
+}
+
+.oauth-section {
+  position: relative;
+  z-index: 5;
+}
+
+.oauth-btn {
+  width: 100%;
+  height: 4.2rem;
+  background-color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 1.4rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.8rem;
+  cursor: pointer;
+}
+
+/* 카카오 */
+.oauth-kakao {
+  background-color: #fee500;
+  color: #3c1e1e;
 }
 
 .signup-btn {
@@ -73,5 +133,3 @@
 .signup-btn:hover {
   background-color: #eaeaea;
 }
-
-

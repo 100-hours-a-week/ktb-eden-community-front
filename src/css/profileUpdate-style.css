@@ -116,8 +116,8 @@
 /* ===== 버튼 ===== */
 .preview-btn {
   width: 90%;
-  background-color: #ACA0EB;
-  color: white;
+  background-color: #3ded8656;
+  color: black;
   border: none;
   border-radius: 0.5rem;
   font-size: 1.4rem;
@@ -125,7 +125,7 @@
   transition: background-color 0.2s;
 }
 .preview-btn:hover {
-  background-color: #9387e0;
+  background-color: #3ded86;
 }
 
 .delete-btn {
@@ -146,29 +146,9 @@
   display: none;
 }
 
-/* ===== 토스트 메시지 ===== */
-.toast-message {
-  position: fixed;
-  bottom: 2rem;
-  left: 50%;
-  transform: translateX(-50%);
-  background-color: #7F6AEE;
-  color: #fff;
-  padding: 1rem 2rem;
-  border-radius: 0.5rem;
-  font-size: 1.4rem;
-  opacity: 0;
-  visibility: hidden;
-  transition: opacity 0.3s;
-}
-.toast-message.show {
-  opacity: 1;
-  visibility: visible;
-}
-
 .confirm-btn {
-  background-color: #ACA0EB;
-  color: white;
+  background-color: #3ded8656;
+  color: black;
   border: none;
   border-radius: 0.5rem;
   padding: 0.8rem 1.6rem;
