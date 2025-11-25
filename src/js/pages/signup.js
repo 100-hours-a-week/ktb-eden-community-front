@@ -1,6 +1,7 @@
 import { postRequest } from "../api/api.js";
 import { uploadProfileImage } from "../api/upload.js";
 import { handleServerError } from "../errors/errorHandlers.js";
+import { spawnPetsFree } from "../common/pets.js";
 
 const API_URL = "/auth/signup";
 
@@ -114,4 +115,7 @@ signupBtn.addEventListener("click", async () => {
   const serverCode = err.message;
   handleServerError(serverCode);
 }
+
+document.addEventListener("DOMContentLoaded", () => {
+  spawnPetsFree(".pet-container", 5);
 });

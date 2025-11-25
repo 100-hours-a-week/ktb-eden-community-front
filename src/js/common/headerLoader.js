@@ -1,5 +1,6 @@
 import { getRequest, postRequest } from "../api/api.js";
 import { requireLogin } from "../utils/auth.js";
+import { spawnPetsFree, spawnOnePet, removeOnePet} from "./pets.js";
 
 loadHeader();
 injectGlobalModal();
@@ -85,6 +86,60 @@ function initHeaderEvents() {
       alert("로그아웃 되었습니다.");
       location.href = "./login.html";
     });
+  }
+
+  // 펫 토글
+  const petToggleBtn = document.getElementById("pet-toggle");
+  const petContainer = document.querySelector(".pet-container");
+  const plusBtn = document.getElementById("pet-plus");
+  const minusBtn = document.getElementById("pet-minus");
+  const petSpawnSize = 5;
+
+  if (!petContainer) {
+    if (plusBtn) plusBtn.style.display = "none";
+    if (minusBtn) minusBtn.style.display = "none";
+    if (petToggleBtn) petToggleBtn.closest(".ios-toggle-wrapper").style.display = "none";
+  }
+  else {
+    if (petToggleBtn && petContainer) {
+      const savedPetState = localStorage.getItem("pet_toggle") || "on";
+
+      if (savedPetState === "on") {
+        petToggleBtn.checked = true;
+        petContainer.classList.remove("visible");
+        if (petContainer.children.length === 0) {
+          spawnPetsFree(".pet-container", petSpawnSize);
+        }
+      } else {
+        petToggleBtn.checked = false;
+        petContainer.classList.add("visible");
+        petContainer.innerHTML = "";
+      }
+
+      petToggleBtn.addEventListener("change", () => {
+        if (petToggleBtn.checked) {
+          petContainer.classList.remove("visible");
+          spawnPetsFree(".pet-container", petSpawnSize);
+          localStorage.setItem("pet_toggle", "on");
+        } else {
+          petContainer.classList.add("visible");
+          petContainer.innerHTML = "";
+          localStorage.setItem("pet_toggle", "off");
+        }
+      });
+      // + 버튼: 한 마리 추가
+      plusBtn.addEventListener("click", () => {
+        if (!petToggleBtn.checked) return;
+        spawnOnePet(".pet-container");
+      });
+    
+      // – 버튼: 한 마리 제거
+      minusBtn.addEventListener("click", () => {
+        if (!petToggleBtn.checked) return;
+        removeOnePet(".pet-container");
+      });
+      
+    }
   }
 
   // 뒤로가기

@@ -1,4 +1,5 @@
 import { postRequest } from "../api/api.js";
+import { spawnPetsFree } from "../common/pets.js";
 
 const API_URL = "/auth/login";
 
@@ -64,4 +65,8 @@ if (homeLogo) {
  */
 signupBtn.addEventListener("click", () => {
   location.href = "./signup.html";
+});
+
+document.addEventListener("DOMContentLoaded", () => {
+  spawnPetsFree(".pet-container", 5);
 });
