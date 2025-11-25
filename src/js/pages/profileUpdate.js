@@ -1,6 +1,7 @@
 import { deleteRequest, getRequest, patchRequest } from "../api/api.js";
 import { openModal, showToast } from "../utils/uiUtil.js";
 import { uploadProfileImage } from "../api/upload.js";
+import { errorMessageMap } from "../errors/errorMessages.js";
 
 const API_URL = "/users";
 
@@ -108,44 +109,55 @@ deleteBtn.addEventListener("click", () => {
   }});
 });
 
+function updateHelper(input, message, color = "red") {
+  const helper = input.parentElement.querySelector(".helper-text");
+  if (!helper) return;
+  helper.textContent = message;
+  helper.style.color = color;
+}
 
 /**
  * 닉네임 검증
  */
 function validateNickname(nickname) {
   if (!nickname) {
-    helperText.textContent = "닉네임을 입력해주세요.";
+    updateHelper(nicknameInput, errorMessageMap.nickname_required, "gray");
+    return false;
+  }
+
+  if (nickname.includes(" ")) {
+    updateHelper(nicknameInput, errorMessageMap.nickname_no_space, "red");
     return false;
   }
 
   if (nickname.length > 10) {
-    helperText.textContent = "최대 10자까지 작성 가능합니다.";
+    updateHelper(nicknameInput, errorMessageMap.nickname_max_10, "red");
     return false;
   }
 
-  helperText.textContent = "";
+  updateHelper(nicknameInput, "사용 가능한 닉네임입니다.", "green");
   return true;
 }
 
 /**
- * 서버 에러코드 → 메시지 매핑
+ * 실시간 닉네임 검사
  */
-const errorMessageMap = {
-  nickname_duplicate: "중복된 닉네임입니다.",
-  nickname_required: "닉네임을 입력해주세요.",
-  nickname_too_long: "최대 10자까지 작성 가능합니다.",
-  user_not_found: "존재하지 않는 회원입니다.",
-};
+nicknameInput.addEventListener("input", () => {
+  validateNickname(nicknameInput.value.trim());
+});
+
 
 
 /**
  * 에러 출력 처리
  */
 function handleError(err) {
-  const serverCode = err.message;
-  if (errorMessageMap[serverCode]) {
-    helperText.textContent = errorMessageMap[serverCode];
-  } else {
-    helperText.textContent = "오류가 발생했습니다.";
+  const code = err.message;
+
+  if (errorMessageMap[code]) {
+    updateHelper(nicknameInput, errorMessageMap[code], "red");
+    return;
   }
+
+  updateHelper(nicknameInput, "오류가 발생했습니다.", "red");
 }
