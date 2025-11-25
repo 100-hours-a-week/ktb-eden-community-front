@@ -248,6 +248,25 @@ button {
   color: black;
 }
 
+.modal-input {
+  width: 100%;
+  padding: 0.8rem;
+  margin-top: 1rem;
+  font-size: 1.4rem;
+  border: 1px solid #ccc;
+  border-radius: 0.5rem;
+}
+
+#modal {
+  display: none;
+  justify-content: center;
+  align-items: center;
+}
+
+#modal.show {
+  display: flex;
+}
+
 
 /* 아이콘을 모두 동일한 flex-item으로 취급 */
 .profile-wrapper,
