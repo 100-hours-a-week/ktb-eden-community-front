@@ -33,9 +33,12 @@ const errorInputMap = {
 /**
  * 입력 필드의 에러 메시지 표시
  */
-function showError(input, message) {
+function showError(input, message, color = "red") {
   const helper = input.parentElement.querySelector(".helper-text");
-  if (helper) helper.textContent = message;
+  if (helper) {
+    helper.textContent = message;
+    helper.style.color = color;
+  }
 }
 
 /**
@@ -113,8 +116,7 @@ signupBtn.addEventListener("click", async () => {
     }
 
   } catch (err) {
-  const serverCode = err.message;
-  handleServerError(serverCode);
+  handleServerError(err.message, errorInputMap, showError);
 }
 });
 
@@ -180,7 +182,6 @@ nicknameInput.addEventListener("input", () => {
       "red"
     );
   }
-
   updateHelper(nicknameInput, "사용 가능한 닉네임입니다.", "green");
 });
 
