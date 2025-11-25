@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>내 정보 | Eden정원</title>
+  <link rel="stylesheet" href="../css/common.css" />
+  <link rel="stylesheet" href="../css/myPage-style.css" />
+</head>
+
+<body>
+  <div id="header"></div>
+
+  <main class="mypage-container">
+
+    <!-- 프로필 섹션 -->
+    <section class="profile-section">
+        <div class="profile-top">
+            <img id="profile-img" class="profile-img" alt="프로필 이미지" />
+            <div class="profile-right">
+                <h2 id="nickname" class="nickname">Eden</h2>
+                <div class="intro-row">
+                    <p id="intro" class="intro">안녕하세요 :) 반갑습니다!</p>
+                    <button id="edit-intro-btn" class="intro-edit-btn">수정</button>
+                </div>
+                <div class="follow-stats">
+                    <div>
+                        <span class="stat-label">구독자</span>
+                        <span id="subscribers" class="stat-number">10k</span>
+                    </div>
+                    <button id="friendListBtn" class="friend-list-btn">구독목록</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+    <div class="divider"></div>
+
+    <div class="divider"></div>
+
+    <!-- 나의 게시글 -->
+    <h3>나의 게시글</h3>
+    <section class="posts-section">
+
+      <div id="my-posts" class="posts-list"></div>
+    </section>
+
+  </main>
+
+  <script type="module" src="../js/common/headerLoader.js"></script>
+  <script type="module" src="../js/pages/myPage.js"></script>
+</body>
+</html>
