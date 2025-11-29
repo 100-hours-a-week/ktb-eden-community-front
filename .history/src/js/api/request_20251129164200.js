@@ -24,7 +24,7 @@ export async function request(method, endpoint, { includeAuth = false, body = nu
     let jsonData = null;
 
     // 토큰 재발급 및 1회 재시도
-    if (res.status === 401 && !hasRetried) {
+    if (includeAuth && res.status === 401 && !hasRetried) {
       hasRetried = true;
       const newToken = await refreshAccessToken();
       if (!newToken) throw new Error("token_refresh_failed");
@@ -96,6 +96,7 @@ async function refreshAccessToken() {
     return result.data.access_token;
   } catch (err) {
     console.error("토큰 갱신 실패", err);
+    redirectToLogin();
     return null;
   }
 }
@@ -116,4 +117,11 @@ function prepareBody(body, headers) {
     finalBody = JSON.stringify(body);
 
     return { finalBody , updateHeaders };
+}
+
+function redirectToLogin() {
+  if (useAuth()) {
+    localStorage.removeItem("accessToken");
+    window.location.href = "/src/pulbic/login.html";  
+  }
 }

@@ -1,6 +1,7 @@
 import { getRequest, postRequest } from "../api/api.js";
 import { requireLogin } from "../utils/auth.js";
 import { spawnPetsFree, spawnOnePet, removeOnePet} from "./pets.js";
+import { API } from "../api/apiEndpoints.js";
 
 loadHeader();
 injectGlobalModal();
@@ -37,7 +38,7 @@ async function loadHeader() {
  */
 async function loadUserProfile() {
   try {
-    const res = await getRequest("/users", true);
+    const res = await getRequest(API.USERS.ME, true);
     const user = res.data;
 
     const headerProfile = document.getElementById("header-profile");
@@ -145,7 +146,7 @@ function initHeaderEvents() {
   if (logoutBtn) {
     logoutBtn.addEventListener("click", async () => {
       if (!requireLogin()) return;
-      await postRequest("/auth/logout", null, false);
+      await postRequest(API.AUTH.LOGOUT, null, false);
       localStorage.removeItem("accessToken");
       alert("로그아웃 되었습니다.");
       location.href = "./login.html";

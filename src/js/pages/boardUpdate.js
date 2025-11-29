@@ -1,11 +1,11 @@
 import { getRequest, patchRequest } from "../api/api.js";
 import { uploadBoardImage } from "../api/upload.js";
+import { API } from "../api/apiEndpoints.js";
 import { showError, clearAllHelperErrors } from "../errors/errorHandlers.js";
 import { errorCodeMap } from "../errors/errorMessages.js";
 
 const urlParams = new URLSearchParams(location.search);
 const boardId = urlParams.get("id");
-const API_URL = `/boards/${boardId}`;
 
 const form = document.getElementById("board-form");
 
@@ -33,7 +33,7 @@ let selectedImageFile = null;
  */
 async function loadBoard() {
   try {
-    const res = await getRequest(API_URL, true);
+    const res = await getRequest(API.BOARDS.DETAIL(boardId), true);
 
     if (!res.data || !res.data.board) {
       alert("게시글 정보를 불러올 수 없습니다.");
@@ -110,7 +110,7 @@ form.addEventListener("submit", async (e) => {
       image: imageUrlToSend,
     };
 
-    const res = await patchRequest(API_URL, body, true);
+    const res = await patchRequest(API.BOARDS.DETAIL(boardId), body, true);
 
     if (res.message === "board_update_success") {
       alert("게시글이 수정되었습니다!");

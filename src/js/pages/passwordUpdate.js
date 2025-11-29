@@ -1,7 +1,7 @@
 import { patchRequest } from "../api/api.js";
 import { showToast } from "../utils/uiUtil.js";
-const API_URL = `/users/password`;
 import { errorCodeMap, passwordRegex } from "../errors/errorMessages.js";
+import { API } from "../api/apiEndpoints.js";
 import { showError, clearAllHelperErrors } from "../errors/errorHandlers.js";
 
 
@@ -32,8 +32,7 @@ editBtn.addEventListener("click", async (e) => {
   if (!validPw || !validPwConfirm) return;
 
   try {
-    await patchRequest(
-      API_URL,
+    await patchRequest(API.USERS.PASSWORD,
       { new_password, new_password_confirm },
       true
     );

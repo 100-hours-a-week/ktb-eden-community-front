@@ -1,6 +1,6 @@
 import { postRequest } from "../api/api.js";
+import { API } from "../api/apiEndpoints.js";
 import { uploadBoardImage } from "../api/upload.js";
-const API_URL = "/boards";
 import { errorCodeMap } from "../errors/errorMessages.js";
 import { showError, clearAllHelperErrors } from "../errors/errorHandlers.js";
 
@@ -78,7 +78,7 @@ document.addEventListener("DOMContentLoaded", () => {
     };
 
   try {
-      const res = await postRequest(API_URL, body, true);
+      const res = await postRequest(API.BOARDS.LIST(), body, true);
       console.log(res);
 
       if (res.message === "board_created_success") {

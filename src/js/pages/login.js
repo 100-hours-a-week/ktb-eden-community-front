@@ -1,9 +1,8 @@
 import { postRequest } from "../api/api.js";
 import { spawnPetsFree } from "../common/pets.js";
-
-const API_URL = "/auth/login";
 import { showError, clearAllHelperErrors } from "../errors/errorHandlers.js";
 import { errorCodeMap } from "../errors/errorMessages.js";
+import { API } from "../api/apiEndpoints.js";
 
 const emailInput = document.getElementById("email");
 const passwordInput = document.getElementById("password");
@@ -29,7 +28,7 @@ loginBtn.addEventListener("click", async () => {
   }
 
   try {
-    const res = await postRequest(API_URL, { email, password });
+    const res = await postRequest(API.AUTH.LOGIN, { email, password });
     if (res.message === "login_success") {
       loginGifPause.classList.add("hidden");
       loginVid.classList.remove("hidden");

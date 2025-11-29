@@ -1,8 +1,7 @@
 import { getRequest } from "../api/api.js";
 import { formatDate } from "../utils/dateUtil.js";
 import { requireLogin } from "../utils/auth.js";
-
-const API_URL = "/boards"
+import { API } from "../api/apiEndpoints.js";
 
 const boardListContainer = document.querySelector(".board-list");
 const categoryTitleEl = document.getElementById("category-name");
@@ -14,6 +13,7 @@ let cursorId = null;
 let isLoading = false;
 let hasNext = true;
 
+const pageSize = 15;
 
 const categoryMap = {
   all: "📋 전체 게시판",
@@ -113,13 +113,10 @@ async function loadMoreBoards() {
   if (isLoading) return;
   isLoading = true;
 
-  const categoryParam = `category=${category}`;
+  const categoryParam = `&category=${category}`;
 
   try {
-    const baseUrl = cursorId
-      ? `${API_URL}?${categoryParam}&cursorId=${cursorId}&pageSize=15`
-      : `${API_URL}?${categoryParam}&pageSize=15`;
-    const res = await getRequest(baseUrl, true);
+    const res = await getRequest(API.BOARDS.LIST(cursorId, pageSize) + categoryParam, true);
 
     if (res.message !== "board_list_success") {
       console.error("게시글 로드 실패:", res);
