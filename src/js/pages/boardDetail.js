@@ -137,35 +137,44 @@ commentList.addEventListener("click", (e) => {
  * 댓글 렌더링
  */
 function renderComments(comments) {
+  const fragment = document.createDocumentFragment();
   commentList.innerHTML = "";
-  comments.forEach((c) => {
-    const isMine = myUserId === Number(c.author_id);
 
-    const item = `
-      <article class="comment-item">
-        <div class="comment-header">
-          <div class="author-info">
-            <img src="${c.author_profile_image}" class="author-img">
-            <div class="author-text">
-              <span class="author-name">${c.author_nickname}</span>
-              <span class="comment-date">${formatDate(c.updated_date)}</span>
+  const commentsHtml = comments.map(
+    (c) => {
+      const isMine = myUserId === Number(c.author_id);
+      return  `
+          <article class="comment-item">
+            <div class="comment-header">
+              <div class="author-info">
+                <img src="${c.author_profile_image}" class="author-img">
+                <div class="author-text">
+                  <span class="author-name">${c.author_nickname}</span>
+                  <span class="comment-date">${formatDate(c.updated_date)}</span>
+                </div>
+              </div>
+
+              ${isMine ? `
+                <div class="comment-actions only-owner">
+                  <button class="edit-btn" data-id="${c.id}">수정</button>
+                  <button class="delete-btn" data-id="${c.id}">삭제</button>
+                </div>
+              ` : ""}
             </div>
-          </div>
 
-          ${isMine ? `
-            <div class="comment-actions only-owner">
-              <button class="edit-btn" data-id="${c.id}">수정</button>
-              <button class="delete-btn" data-id="${c.id}">삭제</button>
-            </div>
-          ` : ""}
-        </div>
+            <p class="comment-content">${c.content}</p>
+          </article>
+        `
+    })
+    .join("");
 
-        <p class="comment-content">${c.content}</p>
-      </article>
-    `;
+  const temp = document.createElement("div");
+  temp.innerHTML = commentsHtml;
 
-    commentList.insertAdjacentHTML("beforeend", item);
-  });
+  while (temp.firstChild) {
+    fragment.appendChild(temp.firstChild);
+  }
+  commentList.appendChild(fragment);
 }
 
 /**
