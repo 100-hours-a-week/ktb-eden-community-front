@@ -46,6 +46,7 @@ async function loadBoardDetail() {
 
     const b = res.data.board;
     const commentsPage = res.data.comments;
+    let movedToLastPageOne = false;
 
     titleEl.textContent = b.title;
     authorEl.textContent = b.author_nickname;
@@ -77,9 +78,10 @@ async function loadBoardDetail() {
 
     totalPages = commentsPage.total_pages;
 
-    if (currentPage === 0 && commentsPage.total_pages > 1) {
-        currentPage = commentsPage.total_pages - 1;
-        return loadCommentPage(currentPage);
+    if (!movedToLastPageOne && currentPage === 0 && commentsPage.total_pages > 1) {
+      movedToLastPageOne = true;
+      currentPage = commentsPage.total_pages - 1;
+      return loadCommentPage(currentPage);
     }
     currentPage = commentsPage.page;
     renderComments(commentsPage.content);
