@@ -1,7 +1,7 @@
 import { deleteRequest, getRequest, patchRequest } from "../api/api.js";
 import { openModal, showToast } from "../utils/uiUtil.js";
 import { uploadProfileImage } from "../api/upload.js";
-import { errorMessageMap } from "../errors/errorMessages.js";
+import { errorCodeMap } from "../errors/errorMessages.js";
 
 const API_URL = "/users";
 
@@ -121,17 +121,17 @@ function updateHelper(input, message, color = "red") {
  */
 function validateNickname(nickname) {
   if (!nickname) {
-    updateHelper(nicknameInput, errorMessageMap.nickname_required, "gray");
+    updateHelper(nicknameInput, errorCodeMap.nickname_required, "gray");
     return false;
   }
 
   if (nickname.includes(" ")) {
-    updateHelper(nicknameInput, errorMessageMap.nickname_no_space, "red");
+    updateHelper(nicknameInput, errorCodeMap.nickname_no_space, "red");
     return false;
   }
 
   if (nickname.length > 10) {
-    updateHelper(nicknameInput, errorMessageMap.nickname_max_10, "red");
+    updateHelper(nicknameInput, errorCodeMap.nickname_max_10, "red");
     return false;
   }
 
@@ -154,8 +154,8 @@ nicknameInput.addEventListener("input", () => {
 function handleError(err) {
   const code = err.message;
 
-  if (errorMessageMap[code]) {
-    updateHelper(nicknameInput, errorMessageMap[code], "red");
+  if (errorCodeMap[code]) {
+    updateHelper(nicknameInput, errorCodeMap[code], "red");
     return;
   }
 
