@@ -1,8 +1,11 @@
 import { PET_LIST } from "../../assets/pet/petSVG.js";
+
+let petIntervals = [];
+
 /**
  * 펫
  */
-export function spawnPetsFree(containerSelector, count = 5) {
+export async function spawnPetsFree(containerSelector, count = 5) {
   const container = document.querySelector(containerSelector);
   if (!container) return;
 
@@ -13,10 +16,12 @@ export function spawnPetsFree(containerSelector, count = 5) {
   const containerWidth = window.innerWidth;
   const containerHeight = window.innerHeight;
   
-  shuffledPets.forEach(randomPet => {
+  for(const petPath of shuffledPets) {
     const pet = document.createElement("div");
     pet.classList.add("pet");
-    pet.innerHTML = randomPet;
+
+    const svgText = await loadSVG(petPath);
+    pet.innerHTML = svgText;
 
     // 초기 랜덤 위치
     let x = Math.random() * containerWidth * 0.8;
@@ -37,7 +42,7 @@ export function spawnPetsFree(containerSelector, count = 5) {
     container.appendChild(pet);
 
     // 움직임 반복
-    setInterval(() => {
+    const intervalId = setInterval(() => {
       x += speedX;
       y += speedY;
 
@@ -47,7 +52,14 @@ export function spawnPetsFree(containerSelector, count = 5) {
       pet.style.left = x + "px";
       pet.style.top = y + "px";
     }, 20);
-  });
+    petIntervals.push(intervalId);
+  }
+}
+
+// SVG 불러오기
+async function loadSVG(path) {
+  const res = await fetch(path);
+  return await res.text();
 }
 
 // 한마리 추가
@@ -62,6 +74,15 @@ export function removeOnePet(containerSelector) {
 
   const lastPet = container.querySelector(".pet:last-child");
   if (lastPet) lastPet.remove();
+}
+
+export function clearAllPets(containerSelector) {
+  const container = document.querySelector(containerSelector);
+  if (!container) return;
+
+  petIntervals.forEach(id => clearInterval(id));
+  petIntervals = [];
+  container.innerHTML = "";
 }
 
 // 배열 섞기
