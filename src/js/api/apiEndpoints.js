@@ -24,8 +24,8 @@ export const API = {
 
             LIKE: (boardId) => `/boards/${boardId}/like`,
     },
-    UPLOAD: {
-        PROFILE: "/upload/profile",
-        BOARD: "/upload/board"
+    FILES: {
+        PROFILE: "/files/profile",
+        BOARD: "/files/board"
     }
 };

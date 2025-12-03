@@ -6,8 +6,8 @@ export async function uploadProfileImage(file) {
   const formData = new FormData();
   formData.append("file", file);
 
-  const result = await postRequest(API.UPLOAD.PROFILE, formData, true);
-  return result?.data?.filePath ?? null;
+  const result = await postRequest(API.FILES.PROFILE, formData, true);
+  return result?.data?.url ?? null;
 }
 
 
@@ -15,6 +15,6 @@ export async function uploadBoardImage(file) {
   const formData = new FormData();
   formData.append("file", file);
 
-  const result = await postRequest(API.UPLOAD.BOARD, formData, true);
-  return result.data?.filePath ?? null;
+  const result = await postRequest(API.FILES.BOARD, formData, true);
+  return result.data?.url ?? null;
 }
