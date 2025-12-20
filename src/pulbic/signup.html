@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>회원가입 | 아무 말 대잔치</title>
+  <link rel="stylesheet" href="../css/common.css" />
+  <link rel="stylesheet" href="../css/signup-style.css" />
+</head>
+<body>
+  <div id="header"></div>
+  <main class="signup-container">
+    <div class="signup-container-content">
+      <label for="signupTitle" class="signupTitle">회원가입</label>
+    
+      <div class="profile-upload">
+        <label class="profile-label">프로필 사진</label>
+        <small class="helper-text"></small>
+        <label for="profile" class="profile-circle">
+          <img id="profile-preview" class="profile-preview" hidden />
+          <span class="plus-icon">+</span>
+        </label>
+
+         <input type="file" id="profile" accept="image/*" hidden />
+    </div>
+
+    <div class="signup-box">
+      <div class="input-group">
+        <label for="email">이메일*</label>
+        <input type="email" id="email" placeholder="이메일을 입력하세요" />
+        <small class="helper-text"></small>
+      </div>
+
+      <div class="input-group">
+        <label for="password">비밀번호*</label>
+        <input type="password" id="password" placeholder="비밀번호를 입력하세요" />
+        <small class="helper-text"></small>
+      </div>
+
+      <div class="input-group">
+        <label for="passwordConfirm">비밀번호 확인*</label>
+        <input type="password" id="passwordConfirm" placeholder="비밀번호를 한번 더 입력하세요" />
+        <small class="helper-text"></small>
+      </div>
+
+      <div class="input-group">
+        <label for="nickname">닉네임*</label>
+        <input type="text" id="nickname" placeholder="닉네임을 입력하세요" />
+        <small class="helper-text"></small>
+      </div>
+
+      <button id="signup-btn" class="signup-main-btn">회원가입</button>
+      <button id="signup-move-login" class="signup-sub-btn">로그인하러 가기</button>
+    </div>
+    </div>
+  </main>
+  <script type="module" src="../js/common/headerLoader.js"></script>
+  <script type="module" src="../js/pages/signup.js"></script>
+</body>
+</html>

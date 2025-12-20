@@ -1,0 +1,67 @@
+.board-create-container {
+  max-width: 60rem;
+  margin: 3rem auto;
+  padding: 0 2rem;
+}
+
+.page-title {
+  text-align: center;
+  font-size: 2rem;
+  font-weight: bold;
+  margin-bottom: 2rem;
+}
+
+.input-group {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 1.5rem;
+}
+
+.input-group label {
+  font-size: 1.4rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+.input-group input,
+.input-group textarea {
+  border: 0.1rem solid #ccc;
+  border-radius: 0.5rem;
+  padding: 1rem;
+  font-size: 1.4rem;
+  background-color: #f3f3f4;
+
+  /* background-color: #fff; */
+  box-sizing: border-box;
+}
+
+.input-group textarea {
+  height: 15rem;
+  resize: none;
+}
+
+/* 파일 업로드 input */
+.input-group input[type="file"] {
+  border: none;
+  font-size: 1.3rem;
+}
+
+/* 등록 버튼 */
+.submit-btn {
+  display: block;
+  width: 80%;
+  background-color: #ACA0EB;
+  color: white;
+  font-size: 1.6rem;
+  font-weight: bold;
+  border: none;
+  border-radius: 0.6rem;
+  padding: 1rem;
+  margin: 2rem auto;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.submit-btn:hover {
+  background-color: #9387e0;
+}
