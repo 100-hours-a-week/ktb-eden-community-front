@@ -85,10 +85,15 @@ button {
 
 /* ===== Helper text ===== */
 .helper-text {
+  display: none;
   color: red;
   font-size: 1.2rem;
   height: 1.5rem;
   text-align: left;
+}
+
+.helper-text:not(:empty) {
+  display: block;
 }
 
 /* 토글 */

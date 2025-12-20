@@ -37,7 +37,15 @@ export async function request(method, endpoint, { includeAuth = false, body = nu
       jsonData = await res.json().catch(() => null);
     }
     // 에러처리
-    if (!res.ok) throw jsonData;
+    if (!res.ok) {
+      const msg =
+        jsonData?.message ||
+        jsonData?.error ||
+        jsonData?.detail ||
+        `${method} ${endpoint} 실패`;
+
+      throw new Error(msg);
+    }
     return jsonData;
   } catch (err) {
     console.error(`[${method} ${endpoint}] 오류:`, err);
@@ -73,14 +81,16 @@ async function refreshAccessToken() {
     const token = useAuth();
     const headers = {};
     if (token) headers["Authorization"] = `Bearer ${token}`;
-    
     const res = await fetch(API_BASE_URL + API.AUTH.REFRESH, {
       method: "POST",
       credentials: "include",
-      headers,
+      headers: {
+        "Authorization": token ? `Bearer ${token}` : ""
+      }
     });
 
     const result = await res.json();
+    console.log(result);
 
     if (!res.ok) throw new Error(result.message);
 

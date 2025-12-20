@@ -1,23 +1,10 @@
 import { postRequest } from "../api/api.js";
+import { API } from "../api/apiEndpoints.js";
 import { uploadBoardImage } from "../api/upload.js";
-import { errorMessageMap } from "../errors/errorMessages.js";
-const API_URL = "/boards";
+import { errorCodeMap } from "../errors/errorMessages.js";
+import { showError, clearAllHelperErrors } from "../errors/errorHandlers.js";
 
 
-/**
- * 입력 필드의 에러 메시지 표시
- */
-function showError(input, message) {
-  const helper = input.parentElement.querySelector(".helper-text");
-  if (helper) helper.textContent = message;
-}
-
-/**
- * 모든 에러 메시지 초기화
- */
-function clearErrors() {
-  document.querySelectorAll(".helper-text").forEach((h) => (h.textContent = ""));
-}
 
 document.addEventListener("DOMContentLoaded", () => {
   const backBtn = document.getElementById("back-btn");
@@ -64,12 +51,13 @@ document.addEventListener("DOMContentLoaded", () => {
   // 폼 제출
   form.addEventListener("submit", async (e) => {
   e.preventDefault();
+  clearAllHelperErrors();
 
   const title = titleInput.value.trim();
   const content = contentInput.value.trim();
 
-  if (!title) return showError(titleInput, errorMessageMap.title_required);
-  if (!content) return showError(contentInput, errorMessageMap.content_required);
+  if (!title) return showError(titleInput, errorCodeMap.B003);
+  if (!content) return showError(contentInput, errorCodeMap.B004);
 
   let imageUrl = null;
 
@@ -90,7 +78,7 @@ document.addEventListener("DOMContentLoaded", () => {
     };
 
   try {
-      const res = await postRequest(API_URL, body, true);
+      const res = await postRequest(API.BOARDS.LIST(), body, true);
       console.log(res);
 
       if (res.message === "board_created_success") {

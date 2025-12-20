@@ -3,12 +3,11 @@ import { requireLogin } from "../utils/auth.js";
 import { formatDate } from "../utils/dateUtil.js";
 import { getUserIdFromToken } from "../utils/jwtUtil.js";
 import { openModal } from "../utils/uiUtil.js";
+import { API } from "../api/apiEndpoints.js";
 
 const myUserId = getUserIdFromToken();
 const urlParams = new URLSearchParams(location.search);
 const boardId = urlParams.get("id");
-
-const API_URL = `/boards/${boardId}`
 
 const titleEl = document.querySelector(".board-title");
 const authorEl = document.querySelector(".author-name");
@@ -41,12 +40,13 @@ const size = 10;
  */
 async function loadBoardDetail() {
   try {
-    const res = await getRequest(`/boards/${boardId}?page=${currentPage}&size=${size}`, true);
+    const res = await getRequest(`${API.BOARDS.DETAIL(boardId)}?page=${currentPage}&size=${size}`, true);
 
     if (!res.data || !res.data.board) return;
 
     const b = res.data.board;
     const commentsPage = res.data.comments;
+    let movedToLastPageOne = false;
 
     titleEl.textContent = b.title;
     authorEl.textContent = b.author_nickname;
@@ -78,9 +78,10 @@ async function loadBoardDetail() {
 
     totalPages = commentsPage.total_pages;
 
-    if (currentPage === 0 && commentsPage.total_pages > 1) {
-        currentPage = commentsPage.total_pages - 1;
-        return loadCommentPage(currentPage);
+    if (!movedToLastPageOne && currentPage === 0 && commentsPage.total_pages > 1) {
+      movedToLastPageOne = true;
+      currentPage = commentsPage.total_pages - 1;
+      return loadCommentPage(currentPage);
     }
     currentPage = commentsPage.page;
     renderComments(commentsPage.content);
@@ -123,7 +124,7 @@ commentList.addEventListener("click", (e) => {
       message: "삭제한 내용은 복구할 수 없습니다.",
       onConfirm: async () => {
         try {
-          await deleteRequest(API_URL + `/comments/${commentId}`, true);
+          await deleteRequest(API.BOARDS.COMMENTS(boardId, commentId), true);
           commentCountEl.textContent = Number(commentCountEl.textContent) - 1;
           loadCommentPage(currentPage);
         } catch (err) {
@@ -138,35 +139,44 @@ commentList.addEventListener("click", (e) => {
  * 댓글 렌더링
  */
 function renderComments(comments) {
+  const fragment = document.createDocumentFragment();
   commentList.innerHTML = "";
-  comments.forEach((c) => {
-    const isMine = myUserId === Number(c.author_id);
 
-    const item = `
-      <article class="comment-item">
-        <div class="comment-header">
-          <div class="author-info">
-            <img src="${c.author_profile_image}" class="author-img">
-            <div class="author-text">
-              <span class="author-name">${c.author_nickname}</span>
-              <span class="comment-date">${formatDate(c.updated_date)}</span>
+  const commentsHtml = comments.map(
+    (c) => {
+      const isMine = myUserId === Number(c.author_id);
+      return  `
+          <article class="comment-item">
+            <div class="comment-header">
+              <div class="author-info">
+                <img src="${c.author_profile_image}" class="author-img">
+                <div class="author-text">
+                  <span class="author-name">${c.author_nickname}</span>
+                  <span class="comment-date">${formatDate(c.updated_date)}</span>
+                </div>
+              </div>
+
+              ${isMine ? `
+                <div class="comment-actions only-owner">
+                  <button class="edit-btn" data-id="${c.id}">수정</button>
+                  <button class="delete-btn" data-id="${c.id}">삭제</button>
+                </div>
+              ` : ""}
             </div>
-          </div>
 
-          ${isMine ? `
-            <div class="comment-actions only-owner">
-              <button class="edit-btn" data-id="${c.id}">수정</button>
-              <button class="delete-btn" data-id="${c.id}">삭제</button>
-            </div>
-          ` : ""}
-        </div>
+            <p class="comment-content">${c.content}</p>
+          </article>
+        `
+    })
+    .join("");
 
-        <p class="comment-content">${c.content}</p>
-      </article>
-    `;
+  const temp = document.createElement("div");
+  temp.innerHTML = commentsHtml;
 
-    commentList.insertAdjacentHTML("beforeend", item);
-  });
+  while (temp.firstChild) {
+    fragment.appendChild(temp.firstChild);
+  }
+  commentList.appendChild(fragment);
 }
 
 /**
@@ -192,7 +202,7 @@ function renderPagination(totalPages, activePage) {
  */
 async function loadCommentPage(page) {
   try {
-    const res = await getRequest(`/boards/${boardId}/comments?page=${page}&size=${size}`);
+    const res = await getRequest(`${API.BOARDS.COMMENTS(boardId)}?page=${page}&size=${size}`);
 
     console.log(res);
 
@@ -218,7 +228,7 @@ commentSubmit.addEventListener("click", async () => {
     const content = commentInput.value.trim();
     if (!content) return alert("댓글을 입력하세요!");
     if (editingCommentId) {
-      await patchRequest(API_URL + `/comments/${editingCommentId}`, { content }, true);
+      await patchRequest(API.BOARDS.COMMENTS(boardId, editingCommentId), { content }, true);
 
       editingCommentId = null;
       commentSubmit.textContent = "댓글 등록";
@@ -229,11 +239,11 @@ commentSubmit.addEventListener("click", async () => {
       return;
     }
 
-    await postRequest(API_URL + `/comments`, {boardId, content}, true);
+    await postRequest(API.BOARDS.COMMENTS(boardId), {boardId, content}, true);
     commentCountEl.textContent = Number(commentCountEl.textContent) + 1;
 
     commentInput.value = "";
-    const res = await getRequest(`/boards/${boardId}/comments?page=0&size=${size}`);
+    const res = await getRequest(`${API.BOARDS.COMMENTS(boardId)}?page=0&size=${size}`);
     const lastPage = res.data.total_pages - 1;
 
     currentPage = lastPage;
@@ -268,7 +278,7 @@ ownerActions.addEventListener("click", (e) => {
       message: "삭제한 내용은 복구할 수 없습니다.",
       onConfirm: async () => {
         try {
-          await deleteRequest(API_URL, true);
+          await deleteRequest(API.BOARDS.DETAIL(boardId), true);
           location.href = "./boardList.html";
         } catch (err) {
           console.error("게시글 삭제 실패:", err);
@@ -304,12 +314,12 @@ likeBtn.addEventListener("click", async () => {
   try {
     if(!requireLogin()) return;
     if (!isLiked) {
-      await postRequest(`/boards/${boardId}/like`, {}, true);
+      await postRequest(API.BOARDS.LIKE(boardId), {}, true);
       likeEl.textContent = Number(likeEl.textContent) + 1;
       isLiked = true;
       updateLikeButtonUI(true);
     } else {
-      await deleteRequest(`/boards/${boardId}/like`, true);
+      await deleteRequest(API.BOARDS.LIKE(boardId), true);
       likeEl.textContent = Number(likeEl.textContent) - 1;
       isLiked = false;
       updateLikeButtonUI(false);

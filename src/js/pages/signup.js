@@ -1,10 +1,9 @@
 import { postRequest } from "../api/api.js";
 import { uploadProfileImage } from "../api/upload.js";
-import { errorMessageMap, emailRegex, passwordRegex } from "../errors/errorMessages.js";
-import { handleServerError } from "../errors/errorHandlers.js";
-import { spawnPetsFree } from "../common/pets.js";
-
-const API_URL = "/auth/signup";
+import { errorCodeMap, emailRegex, passwordRegex } from "../errors/errorMessages.js";
+import { clearAllHelperErrors, showError } from "../errors/errorHandlers.js";
+import { getInputByErrorCode } from "../utils/errorInputSelector.js";
+import { API } from "../api/apiEndpoints.js";
 
 const signupBtn = document.getElementById("signup-btn");
 const toLoginBtn = document.getElementById("signup-move-login");
@@ -18,34 +17,18 @@ const profilePreview = document.getElementById("profile-preview");
 
 let selectedImageFile = null;
 
-const errorInputMap = {
-  email_duplicate: emailInput,
-  email_invalid: emailInput,
-  nickname_duplicate: nicknameInput,
-  nickname_max_10: nicknameInput,
-  nickname_no_space: nicknameInput,
-  password_invalid: pwInput,
-  password_rule_violation: pwInput,
-  password_mismatch: pwConfirmInput,
-  password_required: pwInput,
+const inputs = {
+  email: emailInput,
+  password: pwInput,
+  passwordConfirm: pwConfirmInput,
+  nickname: nicknameInput,
 };
 
-/**
- * 입력 필드의 에러 메시지 표시
- */
-function showError(input, message, color = "red") {
-  const helper = input.parentElement.querySelector(".helper-text");
-  if (helper) {
-    helper.textContent = message;
-    helper.style.color = color;
-  }
-}
-
-/**
- * 모든 에러 메시지 초기화
- */
-function clearErrors() {
-  document.querySelectorAll(".helper-text").forEach((h) => (h.textContent = ""));
+function handleSignupError(err) {
+  const code = err.code;
+  const input = getInputByErrorCode(code, inputs);
+  if (input) showError(input, errorCodeMap[code]);
+  else alert("오류가 발생했습니다.");
 }
 
 /**
@@ -74,7 +57,7 @@ profileInput.addEventListener("change", (e) => {
  * 회원가입 요청
  */
 signupBtn.addEventListener("click", async () => {
-  clearErrors();
+  clearAllHelperErrors();
 
   const email = emailInput.value.trim();
   const password = pwInput.value.trim();
@@ -82,13 +65,13 @@ signupBtn.addEventListener("click", async () => {
   const nickname = nicknameInput.value.trim();
 
 
-  if (!email) return showError(emailInput, errorMessageMap.email_required);
-  if (!password) return showError(pwInput, errorMessageMap.password_required);
-  if (!confirm) return showError(pwConfirmInput, errorMessageMap.password_mismatch);
-  if (!nickname) return showError(nicknameInput, errorMessageMap.nickname_required);
+  if (!email) return showError(emailInput, errorCodeMap.AU011);
+  if (!password) return showError(pwInput, errorCodeMap.AU012);
+  if (!confirm) return showError(pwConfirmInput, errorCodeMap.AU013);
+  if (!nickname) return showError(nicknameInput, errorCodeMap.AU014);
 
   if (password !== confirm) {
-    return showError(pwConfirmInput, errorMessageMap.password_mismatch);
+    return showError(pwConfirmInput, errorCodeMap.AU002);
   }
 
   let imagePath = null;
@@ -108,7 +91,7 @@ signupBtn.addEventListener("click", async () => {
   };
 
   try {
-    const res = await postRequest(API_URL, requestBody);
+    const res = await postRequest(API.AUTH.SIGNUP, requestBody);
 
     if (res.message === "register_success") {
       alert("회원가입 성공!");
@@ -116,76 +99,29 @@ signupBtn.addEventListener("click", async () => {
     }
 
   } catch (err) {
-  handleServerError(err.message, errorInputMap, showError);
-}
+    handleSignupError(err);
+  }
 });
-
-function updateHelper(input, message, color = "red") {
-  const helper = input.parentElement.querySelector(".helper-text");
-  if (!helper) return;
-  helper.textContent = message;
-  helper.style.color = color;
-}
 
 emailInput.addEventListener("input", () => {
   const value = emailInput.value.trim();
-
-  if (!value) {
-    return updateHelper(emailInput, errorMessageMap.email_required, "gray");
-  }
-
-  if (!emailRegex.test(value)) {
-    return updateHelper(emailInput, errorMessageMap.email_invalid, "red");
-  }
-
-  updateHelper(emailInput, "사용 가능한 이메일입니다.", "green");
+  if (!value) return showError(emailInput, errorCodeMap.AU011);
+  if (!emailRegex.test(value)) return showError(emailInput,errorCodeMap.AU010);
+  showError(emailInput, "");
 });
 
 
 pwInput.addEventListener("input", () => {
   const pw = pwInput.value.trim();
-
-  if (!pw) {
-    return updateHelper(pwInput, errorMessageMap.password_required, "gray");
-  }
-
-  if (!passwordRegex.test(pw)) {
-    return updateHelper(pwInput, errorMessageMap.password_rule_violation, "red");
-  }
-
-  updateHelper(pwInput, "사용 가능한 비밀번호입니다.", "green");
+  if (!pw) return showError(pwInput, errorCodeMap.AU012);
+  if (!passwordRegex.test(pw)) return showError(pwInput, errorCodeMap.AU016);
+  showError(pwInput, "");
 });
 
 nicknameInput.addEventListener("input", () => {
   const value = nicknameInput.value.trim();
-
-  if (!value) {
-    return updateHelper(
-      nicknameInput,
-      errorMessageMap.nickname_required,
-      "gray"
-    );
-  }
-
-  if (value.includes(" ")) {
-    return updateHelper(
-      nicknameInput,
-      errorMessageMap.nickname_no_space,
-      "red"
-    );
-  }
-
-  if (value.length > 10) {
-    return updateHelper(
-      nicknameInput,
-      errorMessageMap.nickname_max_10,
-      "red"
-    );
-  }
-  updateHelper(nicknameInput, "사용 가능한 닉네임입니다.", "green");
-});
-
-
-document.addEventListener("DOMContentLoaded", () => {
-  spawnPetsFree(".pet-container", 5);
+  if (!value) return showError(nicknameInput, errorCodeMap.AU014);
+  if (value.includes(" ")) return showError(nicknameInput, errorCodeMap.AU017);
+  if (value.length > 10) return showError(nicknameInput, errorCodeMap.AU018);
+  showError(nicknameInput, "");
 });

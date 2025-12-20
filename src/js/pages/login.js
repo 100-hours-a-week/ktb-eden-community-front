@@ -1,7 +1,8 @@
 import { postRequest } from "../api/api.js";
 import { spawnPetsFree } from "../common/pets.js";
-
-const API_URL = "/auth/login";
+import { showError, clearAllHelperErrors } from "../errors/errorHandlers.js";
+import { errorCodeMap } from "../errors/errorMessages.js";
+import { API } from "../api/apiEndpoints.js";
 
 const emailInput = document.getElementById("email");
 const passwordInput = document.getElementById("password");
@@ -11,37 +12,23 @@ const signupBtn = document.getElementById("signup-btn");
 const loginGifPause = document.getElementById("login-gif-pause");
 const loginVid = document.getElementById("login-vid");
 
-/**
- * 하단 에러 표시
- */
-function showError(input, message) {
-  const helper = input.parentElement.querySelector(".helper-text");
-  if (helper) helper.textContent = message;
-}
-
-/**
- * helper-text 초기화
- */
-function clearErrors() {
-  document.querySelectorAll(".helper-text").forEach((h) => (h.textContent = ""));
-}
 
 /**
  * 로그인 요청
  */
 loginBtn.addEventListener("click", async () => {
-  clearErrors();
+  clearAllHelperErrors();
 
   const email = emailInput.value.trim();
   const password = passwordInput.value.trim();
 
   if (!email || !password) {
-    helperText.textContent = "이메일과 비밀번호를 모두 입력해주세요.";
+    showError(helperText, errorCodeMap.AU007);
     return;
   }
 
   try {
-    const res = await postRequest(API_URL, { email, password });
+    const res = await postRequest(API.AUTH.LOGIN, { email, password });
     if (res.message === "login_success") {
       loginGifPause.classList.add("hidden");
       loginVid.classList.remove("hidden");
@@ -56,7 +43,7 @@ loginBtn.addEventListener("click", async () => {
       }, 1200);
     }
   } catch (err) {
-    helperText.textContent = "이메일 또는 비밀번호가 잘못되었습니다.";
+    showError(helperText, errorCodeMap.AU007);
   }
 });
 

@@ -1,6 +1,7 @@
 import { getRequest, postRequest } from "../api/api.js";
 import { requireLogin } from "../utils/auth.js";
-import { spawnPetsFree, spawnOnePet, removeOnePet} from "./pets.js";
+import { spawnPetsFree, spawnOnePet, removeOnePet, clearAllPets} from "./pets.js";
+import { API } from "../api/apiEndpoints.js";
 
 loadHeader();
 injectGlobalModal();
@@ -37,7 +38,7 @@ async function loadHeader() {
  */
 async function loadUserProfile() {
   try {
-    const res = await getRequest("/users", true);
+    const res = await getRequest(API.USERS.ME, true);
     const user = res.data;
 
     const headerProfile = document.getElementById("header-profile");
@@ -145,7 +146,7 @@ function initHeaderEvents() {
   if (logoutBtn) {
     logoutBtn.addEventListener("click", async () => {
       if (!requireLogin()) return;
-      await postRequest("/auth/logout", null, false);
+      await postRequest(API.AUTH.LOGOUT, null, false);
       localStorage.removeItem("accessToken");
       alert("로그아웃 되었습니다.");
       location.href = "./login.html";
@@ -177,6 +178,8 @@ function initHeaderEvents() {
     if (petToggleBtn && petContainer) {
       const savedPetState = localStorage.getItem("pet_toggle") || "on";
 
+      clearAllPets(".pet-container");
+
       if (savedPetState === "on") {
         petToggleBtn.checked = true;
         petContainer.classList.remove("visible");
@@ -186,7 +189,6 @@ function initHeaderEvents() {
       } else {
         petToggleBtn.checked = false;
         petContainer.classList.add("visible");
-        petContainer.innerHTML = "";
       }
 
       petToggleBtn.addEventListener("change", () => {
@@ -196,7 +198,7 @@ function initHeaderEvents() {
           localStorage.setItem("pet_toggle", "on");
         } else {
           petContainer.classList.add("visible");
-          petContainer.innerHTML = "";
+          clearAllPets(".pet-container");
           localStorage.setItem("pet_toggle", "off");
         }
       });
@@ -289,9 +291,14 @@ function initSidebarEvents() {
   });
 }
 
+window.addEventListener("beforeunload", () => {
+  clearAllPets(".pet-container");
+});
+
 // 뒤로가기 리로드
 window.addEventListener("pageshow", function(event) {
   if (event.persisted || performance.getEntriesByType("navigation")[0].type === "back_forward") {
+    clearAllPets(".pet-container");
     location.reload();
   }
 });

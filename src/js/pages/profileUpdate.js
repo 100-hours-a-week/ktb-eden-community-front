@@ -1,9 +1,9 @@
 import { deleteRequest, getRequest, patchRequest } from "../api/api.js";
 import { openModal, showToast } from "../utils/uiUtil.js";
 import { uploadProfileImage } from "../api/upload.js";
-import { errorMessageMap } from "../errors/errorMessages.js";
-
-const API_URL = "/users";
+import { errorCodeMap } from "../errors/errorMessages.js";
+import { API } from "../api/apiEndpoints.js";
+import { handleServerError, showError } from "../errors/errorHandlers.js";
 
 const profilePreview = document.getElementById("profile-preview");
 const profileUpload = document.getElementById("profile-upload");
@@ -17,12 +17,19 @@ const deleteBtn = document.getElementById("delete-btn");
 
 let selectedImageFile = null;
 
+const errorInputMap = {
+  AU003: nicknameInput, // 닉네임 중복
+  AU014: nicknameInput, // 닉네임 비어있음
+  AU017: nicknameInput, // 공백 포함
+  AU018: nicknameInput, // 길이 제한
+};
+
 /**
  * 사용자 정보 로드
  */
 async function loadUserInfo() {
   try {
-    const res = await getRequest(API_URL, true);
+    const res = await getRequest(API.USERS.ME, true);
     const user = res.data;
 
     emailDisplay.textContent = user.email;
@@ -78,10 +85,11 @@ updateBtn.addEventListener("click", async (e) => {
   const body = {nickname, profile_image: imagePath};
 
   try {
-    await patchRequest(API_URL, body, true, false);
+    await patchRequest(API.USERS.ME, body, true, false);
     showToast("수정 완료되었습니다!");
   } catch (err) {
-    handleError(err);
+    const code = err.code || err.message;
+    handleServerError(code, errorInputMap, showError);
   }
 });
 
@@ -109,33 +117,24 @@ deleteBtn.addEventListener("click", () => {
   }});
 });
 
-function updateHelper(input, message, color = "red") {
-  const helper = input.parentElement.querySelector(".helper-text");
-  if (!helper) return;
-  helper.textContent = message;
-  helper.style.color = color;
-}
 
 /**
  * 닉네임 검증
  */
 function validateNickname(nickname) {
   if (!nickname) {
-    updateHelper(nicknameInput, errorMessageMap.nickname_required, "gray");
+    showError(nicknameInput, errorCodeMap.AU014);
     return false;
   }
-
   if (nickname.includes(" ")) {
-    updateHelper(nicknameInput, errorMessageMap.nickname_no_space, "red");
+    showError(nicknameInput, errorCodeMap.AU017);
     return false;
   }
-
   if (nickname.length > 10) {
-    updateHelper(nicknameInput, errorMessageMap.nickname_max_10, "red");
+    showError(nicknameInput, errorCodeMap.AU018);
     return false;
   }
-
-  updateHelper(nicknameInput, "사용 가능한 닉네임입니다.", "green");
+  showError(nicknameInput, "");
   return true;
 }
 
@@ -145,19 +144,3 @@ function validateNickname(nickname) {
 nicknameInput.addEventListener("input", () => {
   validateNickname(nicknameInput.value.trim());
 });
-
-
-
-/**
- * 에러 출력 처리
- */
-function handleError(err) {
-  const code = err.message;
-
-  if (errorMessageMap[code]) {
-    updateHelper(nicknameInput, errorMessageMap[code], "red");
-    return;
-  }
-
-  updateHelper(nicknameInput, "오류가 발생했습니다.", "red");
-}

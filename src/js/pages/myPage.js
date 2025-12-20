@@ -1,7 +1,7 @@
 import { deleteRequest, getRequest, patchRequest } from "../api/api.js";
 import { openModal, showToast } from "../utils/uiUtil.js";
+import { API } from "../api/apiEndpoints.js";
 
-const API_URL = "/users";
 
 const profileImage = document.getElementById("profile-img");
 const nicknameInput = document.getElementById("nickname");
@@ -17,7 +17,7 @@ let selectedImageFile = null;
  */
 async function loadUserInfo() {
   try {
-    const res = await getRequest(API_URL, true);
+    const res = await getRequest(API.USERS.ME, true);
     const user = res.data;
 
     nicknameInput.value = user.nickname;

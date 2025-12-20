@@ -1,8 +1,8 @@
 import { patchRequest } from "../api/api.js";
 import { showToast } from "../utils/uiUtil.js";
-import { errorMessageMap, passwordRegex } from "../errors/errorMessages.js";
-
-const API_URL = `/users/password`;
+import { errorCodeMap, passwordRegex } from "../errors/errorMessages.js";
+import { API } from "../api/apiEndpoints.js";
+import { showError, clearAllHelperErrors } from "../errors/errorHandlers.js";
 
 
 const passwordInput = document.getElementById("password");
@@ -20,6 +20,7 @@ const editBtn = document.getElementById("edit-btn");
 
 editBtn.addEventListener("click", async (e) => {
   e.preventDefault();
+  clearAllHelperErrors();
 
   const new_password = passwordInput.value.trim();
   const new_password_confirm = passwordConfirmInput.value.trim();
@@ -31,8 +32,7 @@ editBtn.addEventListener("click", async (e) => {
   if (!validPw || !validPwConfirm) return;
 
   try {
-    await patchRequest(
-      API_URL,
+    await patchRequest(API.USERS.PASSWORD,
       { new_password, new_password_confirm },
       true
     );
@@ -46,12 +46,11 @@ editBtn.addEventListener("click", async (e) => {
   } catch (err) {
     const serverCode = err.message;
 
-    if (serverCode && errorMessageMap[serverCode]) {
-      helperPassword.textContent = errorMessageMap[serverCode];
-      return;
+    if (serverCode && errorCodeMap[serverCode]) {
+      helperPassword.textContent = errorCodeMap[serverCode];
+    } else {
+      helperPassword.textContent = "비밀번호 변경 중 오류가 발생했습니다";
     }
-
-    helperPassword.textContent = errorMessageMap[serverCode];
   }
 });
 
@@ -62,12 +61,12 @@ editBtn.addEventListener("click", async (e) => {
 
 function validatePassword(new_password) {
   if (!new_password) {
-    helperPassword.textContent = errorMessageMap.password_required;
+    showError(passwordInput, errorCodeMap.AU012);
     return false;
   }
 
   if (!passwordRegex.test(new_password)) {
-    helperPassword.textContent = errorMessageMap.password_rule_violation;
+    showError(passwordInput, errorCodeMap.AU016);
     return false;
   }
 
@@ -80,12 +79,12 @@ function validatePassword(new_password) {
  */
 function validatePasswordConfirm(new_password, confirm) {
   if (!confirm) {
-    helperConfirm.textContent = errorMessageMap.password_mismatch;
+    showError(passwordConfirmInput, errorCodeMap.AU013);
     return false;
   }
 
   if (new_password !== confirm) {
-    helperConfirm.textContent = errorMessageMap.password_mismatch;
+    showError(passwordConfirmInput, errorCodeMap.AU002);
     return false;
   }
 
